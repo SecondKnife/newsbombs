@@ -26,16 +26,6 @@ export default function EditArticle() {
     layout: "PostLayout",
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) {
-      router.push("/admin/login");
-      return;
-    }
-
-    fetchArticle(token);
-  }, [articleId, router]);
-
   const fetchArticle = async (token: string) => {
     try {
       const response = await fetch(`http://localhost:3001/api/articles/${articleId}`, {
@@ -62,6 +52,17 @@ export default function EditArticle() {
       setLoadingArticle(false);
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("admin_token");
+    if (!token) {
+      router.push("/admin/login");
+      return;
+    }
+
+    fetchArticle(token);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [articleId, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
