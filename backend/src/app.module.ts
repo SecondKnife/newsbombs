@@ -11,14 +11,27 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env', '../.env'], // Load from root or backend directory
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'newsbombs',
+      ...(process.env.DATABASE_URL || process.env.POSTGRES_URL
+        ? {
+            url: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+            ssl: { rejectUnauthorized: false }, // Required for Neon/cloud databases
+          }
+        : {
+            host: process.env.DB_HOST || process.env.POSTGRES_HOST || 'localhost',
+            port: parseInt(process.env.DB_PORT || '5432'),
+            username: process.env.DB_USERNAME || process.env.POSTGRES_USER || 'postgres',
+            password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD || 'postgres',
+            database: process.env.DB_NAME || process.env.POSTGRES_DATABASE || 'newsbombs',
+            ssl: (process.env.POSTGRES_HOST || process.env.DB_HOST) && 
+                 !process.env.DB_HOST?.includes('localhost') && 
+                 !process.env.POSTGRES_HOST?.includes('localhost')
+                 ? { rejectUnauthorized: false }
+                 : false,
+          }),
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: process.env.NODE_ENV !== 'production',
       logging: process.env.NODE_ENV === 'development',
