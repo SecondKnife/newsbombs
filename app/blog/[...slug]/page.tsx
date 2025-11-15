@@ -1,22 +1,21 @@
-// import PageTitle from '@components/PageTitle'
 import PostSimple from '@layouts/PostSimple'
 import PostLayout from '@layouts/PostLayout'
 import PostBanner from '@layouts/PostBanner'
 import siteMetadata from '@data/siteMetadata'
 import { notFound } from 'next/navigation'
-import { useMDXComponents } from 'mdx-components'
-import MDXLayoutRenderer from '@components/MDXLayoutRenderer'
-import blogs from '@data/blogs'
+import { getArticleBySlug, getAllArticles } from '@/lib/api/articles'
 import { Metadata } from 'next'
+import ReactMarkdown from 'react-markdown'
+
 const defaultLayout = 'PostLayout'
 const layouts = {
   PostSimple,
   PostLayout,
   PostBanner,
 }
-const allBlogs = blogs.map(i => i.content)
-const allAuthors: any[] = []
+
 type PageParams = Promise<{ slug: string[] }>;
+
 export async function generateMetadata({
   params: asyncParams,
 }: {
@@ -24,22 +23,17 @@ export async function generateMetadata({
 }): Promise<Metadata | undefined> {
   const params = await asyncParams;
   const slug = decodeURI(params.slug.join('/'))
-  const post = allBlogs.find((p) => p.slug === slug)
-  const authorList = post?.authors || ['default']
-  const authorDetails = authorList.map((author: any) => {
-    const authorResults = allAuthors.find((p) => p.slug === author)
-    return authorResults || {}
-  })
-  if (!post) {
+  const article = await getArticleBySlug(slug)
+  
+  if (!article) {
     return undefined
   }
 
-  const publishedAt = new Date(post.date).toISOString()
-  const modifiedAt = new Date(post.lastmod || post.date).toISOString()
-  const authors = authorDetails.map((author: any) => author?.name)
+  const publishedAt = new Date(article.date).toISOString()
+  const modifiedAt = new Date(article.lastmod || article.date).toISOString()
   let imageList = [siteMetadata.socialBanner]
-  if (post.images) {
-    imageList = typeof post.images === 'string' ? [post.images] : post.images
+  if (article.images && article.images.length > 0) {
+    imageList = article.images
   }
   const ogImages = imageList.map((img) => {
     return {
@@ -48,11 +42,11 @@ export async function generateMetadata({
   })
 
   return {
-    title: post.title,
-    description: post.summary,
+    title: article.title,
+    description: article.summary || '',
     openGraph: {
-      title: post.title,
-      description: post.summary,
+      title: article.title,
+      description: article.summary || '',
       siteName: siteMetadata.title,
       locale: 'en_US',
       type: 'article',
@@ -60,59 +54,111 @@ export async function generateMetadata({
       modifiedTime: modifiedAt,
       url: './',
       images: ogImages,
-      authors: authors.length > 0 ? authors : [siteMetadata.author],
+      authors: [siteMetadata.author],
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.summary,
+      title: article.title,
+      description: article.summary || '',
       images: imageList,
     },
   }
 }
 
-export function generateStaticParams() {
-  const paths = allBlogs.map((p) => ({ slug: p.slug.split('/') }))
-  return paths
+export async function generateStaticParams() {
+  // Fetch all articles to generate static paths
+  const articles = await getAllArticles()
+  return articles.map((article) => ({ 
+    slug: article.slug.split('/') 
+  }))
 }
+
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
   const params = await props.params;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { components } = useMDXComponents({ components: {} as any });
   const slug = decodeURI(params.slug.join('/'))
-  // Filter out drafts in production
-  const sortedCoreContents = allBlogs
-
-  const postIndex = sortedCoreContents.findIndex((p) => p.slug === slug)
-  if (postIndex === -1) {
+  
+  // Fetch article from backend
+  const article = await getArticleBySlug(slug)
+  
+  if (!article) {
     return notFound()
   }
 
-  const prev = sortedCoreContents[postIndex + 1]
-  const next = sortedCoreContents[postIndex - 1]
-  const post = allBlogs.find((p) => p.slug === slug)
-  const authorList = post?.authors || ['default']
-  const authorDetails = authorList.map((author: any) => {
-    const authorResults = allAuthors.find((p) => p.slug === author)
-    return authorResults || {}
-  })
-  const mainContent = post
-  const jsonLd = post.structuredData
-  jsonLd['author'] = authorDetails.map((author: any) => {
-    return {
+  // Fetch all articles for prev/next navigation
+  const allArticles = await getAllArticles()
+  const sortedArticles = allArticles.sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
+  
+  const postIndex = sortedArticles.findIndex((p) => p.slug === slug)
+  const prev = postIndex < sortedArticles.length - 1 ? sortedArticles[postIndex + 1] : null
+  const next = postIndex > 0 ? sortedArticles[postIndex - 1] : null
+
+  // Transform article to match expected format
+  const mainContent = {
+    ...article,
+    name: article.slug,
+    excerpt: article.summary,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: article.title,
+      datePublished: article.date,
+      dateModified: article.lastmod || article.date,
+      author: {
+        '@type': 'Person',
+        name: siteMetadata.author,
+      },
+    },
+    body: {
+      code: article.content,
+    },
+    toc: [],
+    authors: ['default'],
+  }
+
+  const authorDetails = [{
+    name: siteMetadata.author,
+    slug: 'default',
+  }]
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    datePublished: article.date,
+    dateModified: article.lastmod || article.date,
+    author: {
       '@type': 'Person',
-      name: author?.name,
-    }
-  })
-  const Layout = layouts[defaultLayout]
+      name: siteMetadata.author,
+    },
+  }
+
+  const Layout = layouts[article.layout as keyof typeof layouts] || layouts[defaultLayout]
+  
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
-        <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} path={post.file}/>
+      <Layout 
+        content={mainContent} 
+        authorDetails={authorDetails} 
+        next={next ? {
+          ...next,
+          name: next.slug,
+          excerpt: next.summary,
+        } : undefined} 
+        prev={prev ? {
+          ...prev,
+          name: prev.slug,
+          excerpt: prev.summary,
+        } : undefined}
+      >
+        <div className="prose max-w-none dark:prose-invert">
+          <ReactMarkdown>{article.content}</ReactMarkdown>
+        </div>
       </Layout>
     </>
   )

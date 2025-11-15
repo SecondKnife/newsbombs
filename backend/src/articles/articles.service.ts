@@ -21,10 +21,16 @@ export class ArticlesService {
     return await this.articlesRepository.save(article);
   }
 
-  async findAll(): Promise<Article[]> {
-    return await this.articlesRepository.find({
-      order: { date: 'DESC' },
-    });
+  async findAll(includeDrafts: boolean = false): Promise<Article[]> {
+    const queryBuilder = this.articlesRepository.createQueryBuilder('article');
+    
+    if (!includeDrafts) {
+      queryBuilder.where('article.draft = :draft', { draft: false });
+    }
+    
+    return await queryBuilder
+      .orderBy('article.date', 'DESC')
+      .getMany();
   }
 
   async findOne(id: string): Promise<Article> {

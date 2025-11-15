@@ -31,7 +31,8 @@ export class ArticlesController {
 
   @Get()
   findAll() {
-    return this.articlesService.findAll();
+    // Public API: exclude draft articles
+    return this.articlesService.findAll(false);
   }
 
   @Get(':id')
