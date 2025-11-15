@@ -66,11 +66,18 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  // Fetch all articles to generate static paths
-  const articles = await getAllArticles()
-  return articles.map((article) => ({ 
-    slug: article.slug.split('/') 
-  }))
+  try {
+    // Fetch all articles to generate static paths
+    const articles = await getAllArticles()
+    return articles
+      .filter((article) => article.slug && typeof article.slug === 'string')
+      .map((article) => ({ 
+        slug: article.slug.split('/') 
+      }))
+  } catch (error) {
+    console.error('Error generating static params:', error)
+    return []
+  }
 }
 
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
@@ -98,6 +105,9 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
   const mainContent = {
     ...article,
     name: article.slug,
+    slug: article.slug,
+    path: `blog/${article.slug}`,
+    filePath: `blog/${article.slug}`,
     excerpt: article.summary,
     structuredData: {
       '@context': 'https://schema.org',
@@ -146,14 +156,12 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
         content={mainContent} 
         authorDetails={authorDetails} 
         next={next ? {
-          ...next,
-          name: next.slug,
-          excerpt: next.summary,
+          path: `blog/${next.slug}`,
+          title: next.title,
         } : undefined} 
         prev={prev ? {
-          ...prev,
-          name: prev.slug,
-          excerpt: prev.summary,
+          path: `blog/${prev.slug}`,
+          title: prev.title,
         } : undefined}
       >
         <div className="prose max-w-none dark:prose-invert">
