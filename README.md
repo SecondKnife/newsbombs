@@ -297,23 +297,9 @@ If you see TypeScript errors related to backend code:
 - `PUT /articles/:id` - Update article (Admin only)
 - `DELETE /articles/:id` - Delete article (Admin only)
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ## 📄 License
 
 This project is private and proprietary.
-
-## 👤 Author
-
-**Tai Tran Dinh**
-
-- LinkedIn: [@tai-tran-0b68a9187](https://www.linkedin.com/in/tai-tran-0b68a9187/)
 
 ## 🙏 Acknowledgments
 
