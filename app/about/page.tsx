@@ -297,7 +297,7 @@ export default function AboutPage() {
         >
           <div className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4">⭐</div>
           <blockquote className="text-lg sm:text-xl md:text-2xl font-medium italic mb-3 sm:mb-4 leading-relaxed">
-            "Vững tư tưởng, vượt khó khăn, Mở đường thắng lợi"
+            &quot;Vững tư tưởng, vượt khó khăn, Mở đường thắng lợi&quot;
           </blockquote>
           <p className="text-sm sm:text-base text-white/80">— Khẩu hiệu truyền thống của Binh chủng Công binh —</p>
         </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { fadeInUp } from "@/lib/motion/variants";
 import { useTranslation } from "@/contexts/LanguageContext";
@@ -59,12 +60,12 @@ export default function CategoryFilter({ tags, selectedTag, onSelectTag }: Categ
             ))}
 
             {tags.length > 8 && (
-              <a 
+              <Link 
                 href="/tags" 
                 className="text-xs sm:text-sm text-primary-600 dark:text-primary-400 hover:underline whitespace-nowrap"
               >
                 {t('common.viewAll')} →
-              </a>
+              </Link>
             )}
           </div>
         </div>

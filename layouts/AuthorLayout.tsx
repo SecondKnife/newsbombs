@@ -43,7 +43,7 @@ export default function AuthorLayout({ children, content }: Props) {
             <div className="flex space-x-3 pt-6">
               <SocialIcon kind="github" href={github} />
               <SocialIcon kind="linkedin" href={linkedin} />
-              <SocialIcon kind="twitterx" href={siteMetadata.twitter} />
+              {siteMetadata.twitter && <SocialIcon kind="twitterx" href={siteMetadata.twitter} />}
               <SocialIcon kind="mail" href={`mailto:${email}`} />
             </div>
           </MotionBlock>

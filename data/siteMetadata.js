@@ -14,6 +14,11 @@ const siteMetadata = {
   facebook: 'https://facebook.com',
   youtube: 'https://youtube.com',
   instagram: 'https://www.instagram.com',
+  twitter: 'https://twitter.com',
+  github: '',
+  linkedin: '',
+  freelancer: '',
+  upwork: '',
   locale: 'vi-VN',
   analytics: {
     // If you want to use an analytics provider you have to add it to the

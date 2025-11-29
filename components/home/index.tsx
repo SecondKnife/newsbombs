@@ -81,7 +81,7 @@ const HomePage = ({ blogs }: { blogs: any[] }) => {
         {filteredPosts.length === 0 && selectedTag && (
           <div className="text-center py-12">
             <p className="text-gray-500 dark:text-gray-400">
-              {t('home.noPostsFound')} "{selectedTag}"
+              {t('home.noPostsFound')} &quot;{selectedTag}&quot;
             </p>
           </div>
         )}
