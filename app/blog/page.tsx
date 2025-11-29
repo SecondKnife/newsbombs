@@ -42,7 +42,7 @@ export default async function BlogPage(props: any) {
       posts={posts}
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}
-      title="All Posts"
+      title="Tất cả bài viết"
     />
   );
 }

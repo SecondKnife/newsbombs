@@ -8,6 +8,11 @@ const nextConfig = {
   distDir: process.env.NODE_ENV == "development" ? ".dev" : ".next",
   reactStrictMode: false,
   cleanDistDir: true,
+  // Transpile CKEditor packages
+  transpilePackages: [
+    "@ckeditor/ckeditor5-react",
+    "@ckeditor/ckeditor5-build-classic",
+  ],
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [
@@ -19,6 +24,21 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "www.reshot.com",
+        port: "",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3001",
+      },
+      {
+        protocol: "http",
+        hostname: "157.66.100.32",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "157.66.100.32",
         port: "",
       },
     ],

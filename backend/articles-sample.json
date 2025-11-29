@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Tiêu đề bài viết đầu tiên",
+    "summary": "Mô tả ngắn gọn về bài viết này",
+    "content": "## Nội dung chính\n\nĐây là nội dung bài viết của bạn. Bạn có thể sử dụng **Markdown** để format.\n\n### Danh sách\n\n- Item 1\n- Item 2\n- Item 3\n\n### Code\n\n```javascript\nconst hello = 'world';\nconsole.log(hello);\n```\n\n### Hình ảnh\n\nBạn có thể thêm hình ảnh bằng cách đặt đường dẫn trong trường `images`.",
+    "slug": "bai-viet-dau-tien",
+    "date": "2024-11-29",
+    "tags": ["tin tức", "công nghệ"],
+    "images": ["/placeholder.jpg"],
+    "draft": false
+  },
+  {
+    "title": "Bài viết thứ hai về AI",
+    "summary": "Trí tuệ nhân tạo đang thay đổi thế giới",
+    "content": "## Trí tuệ nhân tạo\n\nAI đang phát triển nhanh chóng và ảnh hưởng đến mọi lĩnh vực.\n\n### Ứng dụng\n\n1. Y tế\n2. Giáo dục\n3. Tài chính\n4. Sản xuất\n\n### Tương lai\n\nAI sẽ tiếp tục phát triển và mang lại nhiều lợi ích cho xã hội.",
+    "slug": "bai-viet-ve-ai",
+    "date": "2024-11-28",
+    "tags": ["AI", "công nghệ", "tương lai"],
+    "images": ["/static/images/google.png"],
+    "draft": false
+  }
+]
+

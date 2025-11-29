@@ -1,9 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import Link from "@components/Link";
-import tagData from "@data/tag-data.json";
-import { slug } from "@taitrd/next";
+import { slug } from "@/lib/next-utils";
 import dayjs from "dayjs";
 import { DATE_LOCALE_FORMAT } from "@/lib/constants/format";
 import { Button } from "@/components/ui/button";
@@ -82,7 +82,18 @@ export default function ListLayoutWithTags({
   pagination,
 }: ListLayoutProps) {
   const pathname = usePathname();
-  const tagCounts = tagData as Record<string, number>;
+  
+  // Derive tags from posts dynamically
+  const tagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    posts.forEach((post) => {
+      post.tags?.forEach((tag: string) => {
+        counts[tag] = (counts[tag] || 0) + 1;
+      });
+    });
+    return counts;
+  }, [posts]);
+  
   const tagKeys = Object.keys(tagCounts);
   const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a]);
 
@@ -92,38 +103,39 @@ export default function ListLayoutWithTags({
   return (
     <>
       <div>
-        <div className="pb-6 pt-6">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:hidden sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+        <div className="pb-4 sm:pb-6 pt-4 sm:pt-6">
+          <h1 className="text-2xl sm:text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 md:text-4xl md:leading-10">
             {title}
           </h1>
         </div>
-        <div className="flex sm:space-x-8">
-          <MotionBlock variants={fadeInLeft} className="hidden h-full max-h-screen min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded bg-gray-50 shadow-md dark:bg-gray-900/70 dark:shadow-gray-800/40 sm:flex">
-            <div className="px-6 py-4">
+        <div className="flex flex-col sm:flex-row sm:space-x-6 lg:space-x-8">
+          {/* Sidebar - Hidden on mobile */}
+          <MotionBlock variants={fadeInLeft} className="hidden h-full max-h-screen min-w-[220px] lg:min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded bg-gray-50 shadow-md dark:bg-gray-900/70 dark:shadow-gray-800/40 sm:flex">
+            <div className="px-4 lg:px-6 py-4">
               {pathname.startsWith("/blog") ? (
-                <h3 className="font-bold uppercase text-primary-500">
-                  All Posts
+                <h3 className="font-bold uppercase text-primary-500 text-sm lg:text-base">
+                  Tất cả
                 </h3>
               ) : (
                 <Link
                   href={`/blog`}
-                  className="font-bold uppercase text-gray-700 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+                  className="font-bold uppercase text-gray-700 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500 text-sm lg:text-base"
                 >
-                  All Posts
+                  Tất cả
                 </Link>
               )}
               <ul>
                 {sortedTags.map((t) => {
                   return (
-                    <li key={t} className="my-3">
+                    <li key={t} className="my-2 lg:my-3">
                       {pathname.split("/tags/")[1] === slug(t) ? (
-                        <h3 className="inline px-3 py-2 text-sm font-bold uppercase text-primary-500">
+                        <h3 className="inline px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-bold uppercase text-primary-500">
                           {`${t} (${tagCounts[t]})`}
                         </h3>
                       ) : (
                         <Link
                           href={`/tags/${slug(t)}`}
-                          className="px-3 py-2 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+                          className="px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
                           aria-label={`View posts tagged ${t}`}
                         >
                           {`${t} (${tagCounts[t]})`}
@@ -135,57 +147,48 @@ export default function ListLayoutWithTags({
               </ul>
             </div>
           </MotionBlock>
-          <MotionBlock variants={fadeInRight} className="bg-slate-100 dark:bg-slate-700 px-6 rounded shadow min-w-96">
+          {/* Main content - Full width on mobile */}
+          <MotionBlock variants={fadeInRight} className="bg-slate-100 dark:bg-slate-700 px-3 sm:px-4 lg:px-6 rounded shadow w-full sm:flex-1">
             <ul>
-              {displayPosts.map((post, k) => {
-                const { path, date, title, summary, tags, images } = post;
+              {displayPosts.map((post, index) => {
+                const { slug, date, title, summary, tags, images } = post;
+                const postPath = post.path || `blog/${slug}`;
+                const uniqueKey = post.id || slug || `post-${index}`;
+                
                 return (
-                  <MotionListItem key={path} variants={cards} transition={{duration: 0.9, delay: 0.1 * k}} className="py-5">
-                    <article className="flex flex-col xl:flex-row gap-2 items-center">
-                      <div className="flex flex-col space-y-2 xl:space-y-0 xl:w-9/12">
-                        <dl>
-                          <dt className="sr-only">Published on</dt>
-                          <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                            <time dateTime={date}>
-                              {dayjs(date, "YYYY-MM-DD").format(
-                                DATE_LOCALE_FORMAT
-                              )}
-                            </time>
-                          </dd>
-                        </dl>
-                        <div className="space-y-3">
-                          <div>
-                            <h2 className="text-2xl font-bold leading-8 tracking-tight">
-                              <Link
-                                href={`/${path}`}
-                                className="text-gray-900 dark:text-gray-100"
-                              >
-                                {title}
-                              </Link>
-                            </h2>
-                            <div className="flex flex-wrap">
-                              {tags?.map((tag: any) => (
-                                <Tag key={tag} text={tag} />
-                              ))}
-                            </div>
-                          </div>
-                          <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                            {summary}
-                          </div>
-                        </div>
-                      </div>
-                      <Link href={`/${path}`} className="xl:w-3/12">
+                  <MotionListItem key={uniqueKey} variants={cards} transition={{duration: 0.9, delay: 0.1 * index}} className="py-3 sm:py-4 border-b border-gray-200 dark:border-gray-600 last:border-0">
+                    <article className="flex flex-row gap-3 sm:gap-4">
+                      {/* Image - fixed width */}
+                      <Link href={`/${postPath}`} className="flex-shrink-0 w-24 sm:w-32 md:w-40">
                         <Image
-                          src={
-                            (post.images && post.images[0]) ||
-                            "/placeholder.jpg"
-                          }
-                          alt={post.images && post.images[0] ? post.title : 'Placeholder'}
-                          height={400}
-                          width={600}
-                          className="object-cover rounded-md"
+                          src={(images && images[0]) || "/placeholder.jpg"}
+                          alt={images && images[0] ? title : 'Placeholder'}
+                          height={200}
+                          width={300}
+                          className="object-cover rounded-md w-full h-20 sm:h-24 md:h-28"
                         />
                       </Link>
+                      {/* Content */}
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <time className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1" dateTime={date}>
+                          {dayjs(date, "YYYY-MM-DD").format(DATE_LOCALE_FORMAT)}
+                        </time>
+                        <h2 className="text-sm sm:text-base md:text-lg font-bold leading-tight mb-1 line-clamp-2">
+                          <Link href={`/${postPath}`} className="text-gray-900 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400">
+                            {title}
+                          </Link>
+                        </h2>
+                        <div className="flex flex-wrap gap-1 mb-1 hidden sm:flex">
+                          {tags?.slice(0, 2).map((tag: string, tagIndex: number) => (
+                            <Tag key={`${uniqueKey}-tag-${tagIndex}`} text={tag} />
+                          ))}
+                        </div>
+                        {summary && (
+                          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-2 hidden sm:block">
+                            {summary}
+                          </p>
+                        )}
+                      </div>
                     </article>
                   </MotionListItem>
                 );

@@ -5,7 +5,12 @@ import siteMetadata from '@data/siteMetadata'
 import { notFound } from 'next/navigation'
 import { getArticleBySlug, getAllArticles } from '@/lib/api/articles'
 import { Metadata } from 'next'
-import ReactMarkdown from 'react-markdown'
+
+// Helper function to check if content is HTML
+function isHTMLContent(content: string): boolean {
+  // Check if content contains HTML tags
+  return /<[a-z][\s\S]*>/i.test(content);
+}
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -164,9 +169,16 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
           title: prev.title,
         } : undefined}
       >
-        <div className="prose max-w-none dark:prose-invert">
-          <ReactMarkdown>{article.content}</ReactMarkdown>
-        </div>
+        {isHTMLContent(article.content) ? (
+          <div 
+            className="article-content prose max-w-none dark:prose-invert prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:leading-relaxed prose-a:text-primary-500 prose-img:rounded-lg prose-img:mx-auto prose-figure:mx-auto prose-figure:text-center"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
+        ) : (
+          <div className="article-content prose max-w-none dark:prose-invert whitespace-pre-wrap">
+            {article.content}
+          </div>
+        )}
       </Layout>
     </>
   )

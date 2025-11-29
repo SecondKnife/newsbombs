@@ -1,0 +1,89 @@
+{
+  "common": {
+    "home": "Trang chủ",
+    "news": "Tin tức",
+    "topics": "Chủ đề",
+    "about": "Giới thiệu",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất",
+    "readMore": "Đọc tiếp",
+    "viewAll": "Xem tất cả",
+    "search": "Tìm kiếm",
+    "loading": "Đang tải...",
+    "noResults": "Không có kết quả"
+  },
+  "header": {
+    "adminDashboard": "Bảng điều khiển",
+    "newArticle": "Bài viết mới"
+  },
+  "footer": {
+    "aboutUs": "Về chúng tôi",
+    "allPosts": "Tất cả bài viết",
+    "contact": "Liên hệ",
+    "follow": "Theo dõi",
+    "legal": "Pháp lý",
+    "terms": "Điều khoản sử dụng",
+    "privacy": "Chính sách bảo mật",
+    "copyright": "Bản quyền thuộc về"
+  },
+  "home": {
+    "latestNews": "Tin mới nhất",
+    "moreNews": "Xem thêm",
+    "featuredTopics": "Chủ đề nổi bật",
+    "filterByTopic": "Lọc theo chủ đề:",
+    "all": "Tất cả",
+    "postsAbout": "Bài viết về",
+    "noPostsFound": "Không có bài viết nào với chủ đề"
+  },
+  "blog": {
+    "allPosts": "Tất cả bài viết",
+    "publishedOn": "Đăng ngày",
+    "previous": "Trước",
+    "next": "Tiếp",
+    "of": "của",
+    "noPosts": "Chưa có bài viết"
+  },
+  "about": {
+    "celebration": "Chào mừng 80 năm",
+    "foundingDay": "Ngày thành lập Binh chủng Công binh",
+    "subtitle": "Nền tảng tin tức hiện đại, cập nhật nhanh chóng và đáng tin cậy",
+    "intro": "là trang tin tức được xây dựng nhằm",
+    "introHighlight": "chào mừng kỷ niệm 80 năm Ngày thành lập Binh chủng Công binh Việt Nam",
+    "introDesc": "Trang web là nơi lưu giữ, tổng hợp và chia sẻ những thông tin, hình ảnh, câu chuyện về lịch sử hào hùng của Binh chủng Công binh qua 80 năm xây dựng và phát triển.",
+    "timeline": "Mốc lịch sử quan trọng",
+    "founding": "Ngày thành lập",
+    "foundingDesc": "Ngày 25/03/1946, Binh chủng Công binh Việt Nam chính thức được thành lập, đánh dấu sự ra đời của lực lượng kỹ thuật quân sự đầu tiên của Quân đội Nhân dân Việt Nam.",
+    "resistance": "Kháng chiến trường kỳ",
+    "resistanceDesc": "Qua hai cuộc kháng chiến chống Pháp và chống Mỹ, Công binh đã lập nhiều chiến công xuất sắc: mở đường Trường Sơn, xây dựng cầu phà, phá bom mìn, bảo đảm giao thông...",
+    "glory": "80 năm vẻ vang",
+    "gloryDesc": "Kỷ niệm 80 năm thành lập, Binh chủng Công binh tiếp tục phát triển, hiện đại hóa, đóng góp quan trọng vào sự nghiệp xây dựng và bảo vệ Tổ quốc.",
+    "whatWeProvide": "NewsBombs mang đến cho bạn",
+    "history": "Lịch sử hào hùng",
+    "historyDesc": "Những câu chuyện, sự kiện lịch sử quan trọng về quá trình hình thành và phát triển của Binh chủng Công binh qua 80 năm.",
+    "heroes": "Gương anh hùng",
+    "heroesDesc": "Vinh danh những tướng lĩnh, anh hùng, chiến sĩ Công binh đã cống hiến và hy sinh vì sự nghiệp bảo vệ Tổ quốc.",
+    "achievements": "Chiến công vẻ vang",
+    "achievementsDesc": "Những chiến công, thành tích xuất sắc của Binh chủng trong các cuộc kháng chiến và thời kỳ xây dựng đất nước.",
+    "newsEvents": "Tin tức sự kiện",
+    "newsEventsDesc": "Cập nhật các hoạt động, sự kiện kỷ niệm 80 năm Ngày thành lập Binh chủng Công binh trên toàn quốc.",
+    "modernization": "Hiện đại hóa",
+    "modernizationDesc": "Quá trình xây dựng, phát triển và hiện đại hóa Binh chủng Công binh trong thời kỳ mới.",
+    "gratitude": "Tri ân & Nhớ ơn",
+    "gratitudeDesc": "Thể hiện lòng biết ơn, tri ân đến các thế hệ cán bộ, chiến sĩ Công binh đã đóng góp cho đất nước.",
+    "motto": "Vững tư tưởng, vượt khó khăn, Mở đường thắng lợi",
+    "mottoLabel": "Khẩu hiệu truyền thống của Binh chủng Công binh",
+    "yearsEstablished": "Năm thành lập",
+    "yearFounded": "Năm ra đời",
+    "foundingDate": "Ngày thành lập",
+    "anniversaryYear": "Năm kỷ niệm",
+    "celebrateCta": "Cùng chào mừng 80 năm Binh chủng Công binh!",
+    "celebrateDesc": "Hãy cùng chúng tôi khám phá những câu chuyện, hình ảnh và thông tin về lịch sử hào hùng của Binh chủng Công binh Việt Nam.",
+    "viewNews": "Xem tin tức"
+  },
+  "tags": {
+    "title": "Chủ đề",
+    "allTopics": "Tất cả chủ đề"
+  }
+}
+

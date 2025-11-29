@@ -1,0 +1,89 @@
+{
+  "common": {
+    "home": "Home",
+    "news": "News",
+    "topics": "Topics",
+    "about": "About",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "search": "Search",
+    "loading": "Loading...",
+    "noResults": "No results"
+  },
+  "header": {
+    "adminDashboard": "Admin Dashboard",
+    "newArticle": "New Article"
+  },
+  "footer": {
+    "aboutUs": "About Us",
+    "allPosts": "All Posts",
+    "contact": "Contact",
+    "follow": "Follow Us",
+    "legal": "Legal",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "copyright": "Copyright belongs to"
+  },
+  "home": {
+    "latestNews": "Latest News",
+    "moreNews": "More News",
+    "featuredTopics": "Featured Topics",
+    "filterByTopic": "Filter by topic:",
+    "all": "All",
+    "postsAbout": "Posts about",
+    "noPostsFound": "No posts found for topic"
+  },
+  "blog": {
+    "allPosts": "All Posts",
+    "publishedOn": "Published on",
+    "previous": "Previous",
+    "next": "Next",
+    "of": "of",
+    "noPosts": "No posts yet"
+  },
+  "about": {
+    "celebration": "Celebrating 80 Years",
+    "foundingDay": "Founding Day of Vietnam Military Engineering Corps",
+    "subtitle": "Modern news platform, fast updates and reliable",
+    "intro": "is a news website built to",
+    "introHighlight": "celebrate the 80th anniversary of the founding of Vietnam Military Engineering Corps",
+    "introDesc": "The website serves as a place to preserve, compile and share information, images, and stories about the glorious history of the Engineering Corps through 80 years of construction and development.",
+    "timeline": "Key Historical Milestones",
+    "founding": "Founding Day",
+    "foundingDesc": "On March 25, 1946, the Vietnam Military Engineering Corps was officially established, marking the birth of the first military technical force of the Vietnam People's Army.",
+    "resistance": "Prolonged Resistance",
+    "resistanceDesc": "Through two resistance wars against France and America, the Engineering Corps achieved many outstanding feats: opening the Ho Chi Minh Trail, building bridges and ferries, clearing mines, ensuring transportation...",
+    "glory": "80 Glorious Years",
+    "gloryDesc": "Commemorating 80 years of establishment, the Engineering Corps continues to develop, modernize, and make important contributions to the cause of national construction and defense.",
+    "whatWeProvide": "What NewsBombs Brings You",
+    "history": "Glorious History",
+    "historyDesc": "Important historical stories and events about the formation and development of the Engineering Corps over 80 years.",
+    "heroes": "Heroic Examples",
+    "heroesDesc": "Honoring the generals, heroes, and soldiers of the Engineering Corps who contributed and sacrificed for the cause of national defense.",
+    "achievements": "Outstanding Achievements",
+    "achievementsDesc": "Outstanding feats and achievements of the Corps in resistance wars and the period of national construction.",
+    "newsEvents": "News & Events",
+    "newsEventsDesc": "Updates on activities and events commemorating the 80th anniversary of the founding of the Engineering Corps nationwide.",
+    "modernization": "Modernization",
+    "modernizationDesc": "The process of building, developing and modernizing the Engineering Corps in the new era.",
+    "gratitude": "Gratitude & Remembrance",
+    "gratitudeDesc": "Expressing gratitude to generations of officers and soldiers of the Engineering Corps who contributed to the country.",
+    "motto": "Firm ideology, overcome difficulties, Open the road to victory",
+    "mottoLabel": "Traditional motto of the Engineering Corps",
+    "yearsEstablished": "Years Established",
+    "yearFounded": "Year Founded",
+    "foundingDate": "Founding Date",
+    "anniversaryYear": "Anniversary Year",
+    "celebrateCta": "Celebrate 80 Years of Engineering Corps!",
+    "celebrateDesc": "Join us in exploring the stories, images and information about the glorious history of Vietnam Military Engineering Corps.",
+    "viewNews": "View News"
+  },
+  "tags": {
+    "title": "Topics",
+    "allTopics": "All Topics"
+  }
+}
+

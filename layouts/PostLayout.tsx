@@ -116,7 +116,19 @@ export default function PostLayout({
             </dl>
             <div className="divide-y divide-gray-200 dark:divide-gray-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
               {cover && (
-                <Image src={cover} height={600} width={800} alt={title} className="rounded-lg mx-auto py-6"/>
+                <div className="py-6">
+                  <div className="relative w-full aspect-video max-h-[500px] overflow-hidden rounded-xl shadow-lg">
+                    <Image 
+                      src={cover} 
+                      fill
+                      alt={title} 
+                      className="object-cover object-center"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 900px"
+                      priority
+                      unoptimized
+                    />
+                  </div>
+                </div>
               )}
               <MotionBlock variants={fadeIn} className="prose max-w-none pb-8 pt-10 dark:prose-invert">
                 {children}

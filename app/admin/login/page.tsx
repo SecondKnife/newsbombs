@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
 export default function AdminLogin() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -20,7 +22,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/auth/login", {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,12 +36,12 @@ export default function AdminLogin() {
         throw new Error(data.message || "Login failed");
       }
 
-      // Store token
+      // Store token and user info
       localStorage.setItem("admin_token", data.access_token);
       localStorage.setItem("admin_user", JSON.stringify(data.user));
 
-      // Redirect to admin dashboard
-      router.push("/admin/dashboard");
+      // Redirect to admin dashboard with full page reload to update header
+      window.location.href = "/admin/dashboard";
     } catch (err: any) {
       setError(err.message || "An error occurred");
     } finally {

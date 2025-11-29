@@ -3,9 +3,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // Increase body size limit for large content with images
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
   
   // Enable CORS for frontend
   app.enableCors({

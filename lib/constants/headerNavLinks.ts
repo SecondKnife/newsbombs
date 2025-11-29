@@ -1,9 +1,8 @@
 const headerNavLinks = [
-  { href: '/', title: 'Home' },
+  { href: '/', title: 'Trang chủ' },
   { href: '/blog', title: 'Tin tức' },
-  { href: '/search', title: 'Tra cứu thông tin' },
-  { href: '/admin/login', title: 'Đăng nhập' },
-  { href: '/register', title: 'Đăng ký' },
+  { href: '/tags', title: 'Chủ đề' },
+  { href: '/about', title: 'Giới thiệu' },
 ]
 
 export default headerNavLinks

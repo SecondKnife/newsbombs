@@ -1,7 +1,13 @@
-export * from '@taitrd/next/utils'
-/**
- * Returns a random number between min (inclusive) and max (exclusive)
- */
-export function getRandomArbitrary(min: number, max: number) {
-    return Math.random() * (max - min) + min;
+// Utility function to convert text to URL-friendly slug
+export function slug(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')        // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')    // Remove all non-word chars
+    .replace(/\-\-+/g, '-')      // Replace multiple - with single -
+    .replace(/^-+/, '')          // Trim - from start of text
+    .replace(/-+$/, '');         // Trim - from end of text
 }
+

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import siteMetadata from "@data/siteMetadata";
-// import ThemeWrapper from "../components/ThemeWrapper";
 import Footer from "@components/Footer";
 import Header from "@components/Header";
 import SectionContainer from "@components/SectionContainer";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import ThemeWrapper from "@/components/ThemeWrapper";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import bgStylesConfigs from "@/lib/client/bgStylesConfigs";
 import { Analytics } from "@vercel/analytics/react"
 import dynamic from "next/dynamic";
@@ -118,16 +118,18 @@ export default async function RootLayout({
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <body className="">
         <Analytics/>
-        <ThemeWrapper bgFlagNumber={bgFlagNumber}>
-          <AnimatedBackground className="bg-slate-100 pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white"/>
-          <SectionContainer>
-            <MotionContainer className="max-w-7xl mx-auto relative z-10 flex h-screen flex-col justify-between font-sans">
+        <LanguageProvider>
+          <ThemeWrapper bgFlagNumber={bgFlagNumber}>
+            <AnimatedBackground className="bg-slate-100 pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white"/>
+            <SectionContainer>
+            <MotionContainer className="max-w-7xl mx-auto relative z-10 flex min-h-screen flex-col justify-between font-sans px-2 sm:px-4">
               <Header />
-              <main className="mb-auto">{children}</main>
+              <main className="mb-auto flex-1 w-full overflow-x-hidden">{children}</main>
               <Footer />
             </MotionContainer>
-          </SectionContainer>
-        </ThemeWrapper>
+            </SectionContainer>
+          </ThemeWrapper>
+        </LanguageProvider>
       </body>
     </html>
   );
