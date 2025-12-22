@@ -38,7 +38,7 @@ export default function CategoryFilter({ tags, selectedTag, onSelectTag }: Categ
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             }`}
           >
-            {t('common.all')}
+            {t('home.all')}
           </button>
 
           {/* Tag Buttons */}
@@ -70,4 +70,5 @@ export default function CategoryFilter({ tags, selectedTag, onSelectTag }: Categ
     </MotionBlock>
   );
 }
+
 

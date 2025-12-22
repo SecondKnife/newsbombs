@@ -11,3 +11,4 @@ export function slug(text: string): string {
     .replace(/-+$/, '');         // Trim - from end of text
 }
 
+

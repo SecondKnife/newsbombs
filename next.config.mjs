@@ -31,15 +31,16 @@ const nextConfig = {
         hostname: "localhost",
         port: "3001",
       },
+      // Backend uploads on VPS (with and without explicit port)
       {
         protocol: "http",
         hostname: "157.66.100.32",
-        port: "",
+        port: "3001",
       },
       {
         protocol: "https",
         hostname: "157.66.100.32",
-        port: "",
+        port: "3001",
       },
     ],
   },

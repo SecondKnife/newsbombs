@@ -10,7 +10,7 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteLogo: '/logo-light.png',
   socialBanner: '/static/images/twitter-card.png',
-  email: 'khactuannguyen54@gmail.com',
+  email: 'nhatbinh26@gmail.com',
   facebook: 'https://facebook.com',
   youtube: 'https://youtube.com',
   instagram: 'https://www.instagram.com',
