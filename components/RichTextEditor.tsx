@@ -25,7 +25,7 @@ class MyUploadAdapter {
         
         const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
         
-        fetch('http://localhost:3001/api/articles/ckeditor-upload', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api'}/articles/ckeditor-upload`, {
           method: 'POST',
           headers: token ? { 'Authorization': `Bearer ${token}` } : {},
           body: formData,

@@ -37,7 +37,7 @@ export default function AdminDashboard() {
 
   const fetchArticles = async (token: string) => {
     try {
-      const response = await fetch("http://localhost:3001/api/articles", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api'}/articles`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
 
     const token = localStorage.getItem("admin_token");
     try {
-      const response = await fetch(`http://localhost:3001/api/articles/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api'}/articles/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

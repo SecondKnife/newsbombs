@@ -40,6 +40,21 @@
       ],
       "@utils": [
         "lib/utils"
+      ],
+      "@nestjs/core": [
+        "./backend/node_modules/@nestjs/core"
+      ],
+      "@nestjs/platform-express": [
+        "./backend/node_modules/@nestjs/platform-express"
+      ],
+      "@nestjs/common": [
+        "./backend/node_modules/@nestjs/common"
+      ],
+      "express": [
+        "./backend/node_modules/express"
+      ],
+      "body-parser": [
+        "./backend/node_modules/body-parser"
       ]
     },
     "target": "ES2017"
@@ -53,6 +68,7 @@
   ],
   "exclude": [
     "node_modules",
-    "backend"
+    "backend",
+    "api"
   ]
 }

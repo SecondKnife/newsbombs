@@ -8,6 +8,27 @@ const nextConfig = {
   distDir: process.env.NODE_ENV == "development" ? ".dev" : ".next",
   reactStrictMode: false,
   cleanDistDir: true,
+  // Exclude backend and api folder from Next.js compilation
+  webpack: (config, { isServer }) => {
+    // Ignore backend and api folders during Next.js build
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/backend/**', '**/api/**'],
+    };
+    // Exclude api and backend from webpack compilation
+    config.resolve = config.resolve || {};
+    config.resolve.alias = config.resolve.alias || {};
+    // Add alias to prevent webpack from resolving backend/api during build
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push({
+        '../backend/src/app.module': 'commonjs ../backend/src/app.module',
+      });
+    }
+    return config;
+  },
+  // Only compile pages, app, and components - exclude api and backend
+  pageExtensions: ['page.tsx', 'page.ts', 'tsx', 'ts', 'jsx', 'js'],
   // Transpile CKEditor packages
   transpilePackages: [
     "@ckeditor/ckeditor5-react",
