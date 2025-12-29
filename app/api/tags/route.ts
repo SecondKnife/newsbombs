@@ -1,6 +1,19 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:3001';
+// Server-side API route - always needs full URL
+const getApiBaseUrl = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
+  if (apiUrl) {
+    if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
+      return apiUrl;
+    }
+    return `http://${apiUrl}`;
+  }
+  // Default to localhost for server-side
+  return 'http://localhost:3001';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export async function GET() {
   try {

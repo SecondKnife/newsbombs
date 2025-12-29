@@ -1,4 +1,30 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Get API base URL
+// Server-side (SSR/SSG) needs full URL, client-side can use relative path
+const getApiBaseUrl = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  
+  // If running on server-side (SSR/SSG), need full URL
+  if (typeof window === 'undefined') {
+    // Server-side: use full URL
+    if (apiUrl) {
+      if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
+        return apiUrl;
+      }
+      return `http://${apiUrl}`;
+    }
+    // Default to localhost for server-side
+    return 'http://localhost:3001';
+  }
+  
+  // Client-side: can use relative path (empty string) or full URL
+  if (!apiUrl) return ''; // Relative path for client-side
+  if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
+    return apiUrl;
+  }
+  return `http://${apiUrl}`;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface Article {
   id: string;

@@ -27,7 +27,17 @@ const RichTextEditor = dynamic(
   }
 );
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// Support relative path (empty string) or full URL
+const getApiUrl = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  if (!apiUrl) return ''; // Use relative path
+  if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
+    return apiUrl;
+  }
+  return `http://${apiUrl}`;
+};
+
+const API_URL = getApiUrl();
 
 interface UploadedImage {
   filename: string;
