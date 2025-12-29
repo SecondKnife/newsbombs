@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port=3455",
     "debug": "NODE_OPTIONS='--inspect' next dev --port=3455",
-    "build": "rm -rf .next/cache && next build",
+    "build": "next build && rm -rf .next/cache",
     "build:clean": "rm -rf .next && npm run build",
     "start": "next start --port=3465",
     "lint": "next lint",
