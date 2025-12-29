@@ -27,7 +27,6 @@ const RichTextEditor = dynamic(
   }
 );
 
-// Support relative path (empty string) or full URL
 const getApiUrl = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
   if (!apiUrl) return ''; // Use relative path

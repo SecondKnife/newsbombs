@@ -14,10 +14,6 @@ export const fadeInUp = {
   initial: {
     y: -60,
     opacity: 0,
-    transition: {
-      duration: 0.6,
-      ease: easeing,
-    },
   },
   animate: {
     y: 0,
@@ -25,7 +21,7 @@ export const fadeInUp = {
     transition: {
       duration: 0.6,
       delay: 0.5,
-      ease: easeing,
+      ease: easeing as [number, number, number, number],
     },
   },
 };

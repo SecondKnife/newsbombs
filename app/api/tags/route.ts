@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 
-// Server-side API route - always needs full URL
 const getApiBaseUrl = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
   if (apiUrl) {
