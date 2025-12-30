@@ -6,7 +6,7 @@
     "dev": "next dev --port=3455",
     "debug": "NODE_OPTIONS='--inspect' next dev --port=3455",
     "build": "next build",
-    "pages:build": "npm run build && npx @cloudflare/next-on-pages",
+    "pages:build": "next build && npx @cloudflare/next-on-pages",
     "start": "next start --port=3465",
     "lint": "next lint",
     "backend:dev": "cd backend && npm run start:dev",

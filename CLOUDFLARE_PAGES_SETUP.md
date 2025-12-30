@@ -34,12 +34,13 @@ Sau khi cập nhật build command, Cloudflare Pages sẽ tự động trigger b
   1. Chạy `next build` để build Next.js
   2. Chạy `@cloudflare/next-on-pages` để convert output thành format tương thích với Cloudflare Pages
 - Output sẽ được tạo trong `.vercel/output/static`
-- File `wrangler.toml` đã được tạo để cấu hình output directory
+- **KHÔNG** cần file `wrangler.toml` cho Cloudflare Pages (chỉ cần cho Workers)
 
 ## Troubleshooting
 
-Nếu vẫn gặp lỗi:
-1. Kiểm tra build log trên Cloudflare Pages
-2. Đảm bảo `@cloudflare/next-on-pages` đã được cài đặt trong `devDependencies`
-3. Kiểm tra xem có lỗi trong quá trình build không
+Nếu vẫn gặp lỗi "unable to submit build job":
+1. Đảm bảo build command đúng format: `npm install && npm run pages:build`
+2. Đảm bảo output directory là: `.vercel/output/static`
+3. Kiểm tra xem `@cloudflare/next-on-pages` đã được cài đặt trong `devDependencies`
+4. Thử xóa và tạo lại project trên Cloudflare Pages
 
