@@ -11,7 +11,7 @@ Next.js không chạy trực tiếp trên Cloudflare Pages mà cần adapter `@c
 2. Vào **Settings** → **Builds & deployments**
 3. Cập nhật **Build command** thành:
    ```bash
-   npm install && npm run pages:build
+   npm install --legacy-peer-deps && npm run pages:build
    ```
 4. Cập nhật **Output directory** thành:
    ```
@@ -38,8 +38,13 @@ Sau khi cập nhật build command, Cloudflare Pages sẽ tự động trigger b
 
 ## Troubleshooting
 
-Nếu vẫn gặp lỗi "unable to submit build job":
-1. Đảm bảo build command đúng format: `npm install && npm run pages:build`
+### Lỗi dependency conflict (ERESOLVE)
+Nếu gặp lỗi `ERESOLVE unable to resolve dependency tree`:
+- Build command phải có `--legacy-peer-deps`: `npm install --legacy-peer-deps && npm run pages:build`
+- Hoặc downgrade Next.js xuống `15.5.2` nếu muốn tương thích hoàn toàn
+
+### Lỗi "unable to submit build job":
+1. Đảm bảo build command đúng format: `npm install --legacy-peer-deps && npm run pages:build`
 2. Đảm bảo output directory là: `.vercel/output/static`
 3. Kiểm tra xem `@cloudflare/next-on-pages` đã được cài đặt trong `devDependencies`
 4. Thử xóa và tạo lại project trên Cloudflare Pages
