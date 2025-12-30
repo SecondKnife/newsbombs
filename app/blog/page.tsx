@@ -3,6 +3,8 @@ import { genPageMetadata } from "data/seo";
 import { getAllArticles } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
+export const runtime = 'edge';
+
 export const metadata = genPageMetadata({ title: "Blog" });
 
 export default async function BlogPage(props: any) {
