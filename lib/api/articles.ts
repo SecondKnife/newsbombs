@@ -1,18 +1,27 @@
 // Get API base URL with better fallback handling
 function getApiBaseUrl(): string {
   // If explicitly set, use it
-  if (process.env.NEXT_PUBLIC_API_URL) {
+  if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
   
-  // On Cloudflare Pages, return empty string to use relative paths
-  // This assumes API routes are proxied or backend is on same domain
-  if (typeof process !== 'undefined' && process.env.CF_PAGES) {
-    return '';
+  // On Cloudflare Pages, check for CF_PAGES environment variable
+  // If no API URL is set, return empty string to avoid localhost calls
+  if (typeof process !== 'undefined') {
+    // Check if we're on Cloudflare Pages
+    if (process.env.CF_PAGES || process.env.CF_PAGES_BRANCH) {
+      // Return empty string to avoid making requests to localhost
+      return '';
+    }
   }
   
-  // Development fallback
-  return 'http://localhost:3001';
+  // Development fallback (only in Node.js environment)
+  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+    return 'http://localhost:3001';
+  }
+  
+  // Default: return empty string to avoid errors
+  return '';
 }
 
 const API_BASE_URL = getApiBaseUrl();
@@ -35,19 +44,30 @@ export interface Article {
 }
 
 // Helper function to create fetch with timeout
+// Note: setTimeout requires nodejs_compat flag in Cloudflare Pages
 async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 5000): Promise<Response> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
   try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-    return response;
+    // Try to use AbortController with timeout if available
+    if (typeof AbortController !== 'undefined' && typeof setTimeout !== 'undefined') {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        return response;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+      }
+    } else {
+      // Fallback: fetch without timeout if setTimeout is not available
+      return await fetch(url, options);
+    }
   } catch (error) {
-    clearTimeout(timeoutId);
     throw error;
   }
 }
