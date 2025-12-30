@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { getAllArticles } from "@/lib/api/articles";
+import { getAllArticles, type Article } from "@/lib/api/articles";
 
 export const runtime = 'edge';
 
@@ -7,7 +7,7 @@ const HomePage = dynamic(() => import("@/components/home"));
 
 export default async function Home() {
   // Fetch articles from backend API
-  let articles = [];
+  let articles: Article[] = [];
   try {
     articles = await getAllArticles();
   } catch (error) {
