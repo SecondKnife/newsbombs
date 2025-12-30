@@ -1,29 +1,28 @@
 // Get API base URL with better fallback handling
+// In edge runtime, environment variables are available directly
 function getApiBaseUrl(): string {
-  // If explicitly set, use it
-  if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+  // Try to get from environment variable (works in both Node.js and Edge runtime)
+  // In Cloudflare Pages, NEXT_PUBLIC_* variables are available at runtime
+  const apiUrl = typeof process !== 'undefined' 
+    ? process.env.NEXT_PUBLIC_API_URL 
+    : (globalThis as any).NEXT_PUBLIC_API_URL;
+  
+  if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
+    return apiUrl.trim();
   }
   
-  // On Cloudflare Pages, check for CF_PAGES environment variable
-  // If no API URL is set, return empty string to avoid localhost calls
-  if (typeof process !== 'undefined') {
-    // Check if we're on Cloudflare Pages
-    if (process.env.CF_PAGES || process.env.CF_PAGES_BRANCH) {
-      // Return empty string to avoid making requests to localhost
-      return '';
-    }
-  }
-  
-  // Development fallback (only in Node.js environment)
-  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
-    return 'http://localhost:3001';
-  }
-  
-  // Default: return empty string to avoid errors
+  // On Cloudflare Pages without API URL, return empty string
+  // This will cause getAllArticles to return empty array gracefully
   return '';
 }
 
+// Get API base URL at runtime (not at module load time)
+// This ensures environment variables are read correctly in edge runtime
+export function getApiBaseUrlRuntime(): string {
+  return getApiBaseUrl();
+}
+
+// For backward compatibility, but prefer using getApiBaseUrlRuntime() in edge runtime
 const API_BASE_URL = getApiBaseUrl();
 
 export interface Article {
@@ -74,13 +73,23 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout 
 
 export async function getAllArticles(): Promise<Article[]> {
   try {
-    // If no API URL is configured, return empty array
-    if (!API_BASE_URL) {
+    // Get API URL at runtime to ensure environment variables are read correctly
+    const apiBaseUrl = getApiBaseUrlRuntime();
+    
+    // If no API URL is configured, return empty array gracefully
+    if (!apiBaseUrl || apiBaseUrl.trim() === '') {
       console.warn('No API_BASE_URL configured, returning empty articles array');
       return [];
     }
     
-    const response = await fetchWithTimeout(`${API_BASE_URL}/api/articles`, {
+    // Ensure URL is valid before making request
+    const url = `${apiBaseUrl}/api/articles`;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      console.warn('Invalid API URL, returning empty articles array');
+      return [];
+    }
+    
+    const response = await fetchWithTimeout(url, {
       next: { revalidate: 60 }, // Revalidate every 60 seconds
     }, 5000);
     
@@ -89,7 +98,9 @@ export async function getAllArticles(): Promise<Article[]> {
       return [];
     }
     
-    return await response.json();
+    const data = await response.json();
+    // Ensure we return an array
+    return Array.isArray(data) ? data : [];
   } catch (error: any) {
     // Handle network errors gracefully
     if (error.name === 'AbortError') {
@@ -103,13 +114,22 @@ export async function getAllArticles(): Promise<Article[]> {
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
+    // Get API URL at runtime
+    const apiBaseUrl = getApiBaseUrlRuntime();
+    
     // If no API URL is configured, return null
-    if (!API_BASE_URL) {
+    if (!apiBaseUrl || apiBaseUrl.trim() === '') {
       console.warn('No API_BASE_URL configured, cannot fetch article');
       return null;
     }
     
-    const response = await fetchWithTimeout(`${API_BASE_URL}/api/articles/slug/${encodeURIComponent(slug)}`, {
+    const url = `${apiBaseUrl}/api/articles/slug/${encodeURIComponent(slug)}`;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      console.warn('Invalid API URL, cannot fetch article');
+      return null;
+    }
+    
+    const response = await fetchWithTimeout(url, {
       next: { revalidate: 60 },
     }, 5000);
     
@@ -135,13 +155,22 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 
 export async function getArticleById(id: string): Promise<Article | null> {
   try {
+    // Get API URL at runtime
+    const apiBaseUrl = getApiBaseUrlRuntime();
+    
     // If no API URL is configured, return null
-    if (!API_BASE_URL) {
+    if (!apiBaseUrl || apiBaseUrl.trim() === '') {
       console.warn('No API_BASE_URL configured, cannot fetch article');
       return null;
     }
     
-    const response = await fetchWithTimeout(`${API_BASE_URL}/api/articles/${id}`, {
+    const url = `${apiBaseUrl}/api/articles/${id}`;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      console.warn('Invalid API URL, cannot fetch article');
+      return null;
+    }
+    
+    const response = await fetchWithTimeout(url, {
       next: { revalidate: 60 },
     }, 5000);
     
