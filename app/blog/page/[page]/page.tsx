@@ -2,8 +2,6 @@ import ListLayout from "@layouts/ListLayoutWithTags";
 import { getAllArticles } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-export const runtime = 'edge';
-
 export async function generateStaticParams() {
   // Fetch articles to calculate total pages
   const articles = await getAllArticles();
