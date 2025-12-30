@@ -11,8 +11,10 @@ Next.js không chạy trực tiếp trên Cloudflare Pages mà cần adapter `@c
 2. Vào **Settings** → **Builds & deployments**
 3. Cập nhật **Build command** thành:
    ```bash
-   npm install --legacy-peer-deps && npm run pages:build
+   npm run pages:build
    ```
+   
+   **Lưu ý:** File `.npmrc` đã được tạo để tự động dùng `--legacy-peer-deps`, và Next.js đã được downgrade xuống `15.5.2` để tương thích.
 4. Cập nhật **Output directory** thành:
    ```
    .vercel/output/static
