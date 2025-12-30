@@ -30,15 +30,27 @@ Next.js không chạy trực tiếp trên Cloudflare Pages mà cần adapter `@c
    .vercel/output/static
    ```
 
-### Bước 2: Environment Variables (nếu cần)
+### Bước 2: Thêm nodejs_compat Compatibility Flag (QUAN TRỌNG!)
+
+**BẮT BUỘC:** Bạn phải thêm `nodejs_compat` flag để ứng dụng hoạt động:
+
+1. Vào **Settings** → cuộn xuống phần **Runtime**
+2. Tìm mục **Compatibility flags** → Click icon **Edit** (bút chì)
+3. Click **Add flag** → Chọn/nhập: `nodejs_compat`
+4. **QUAN TRỌNG:** Thêm flag cho **CẢ Production và Preview** environments
+5. Click **Save**
+
+Xem hướng dẫn chi tiết trong file `CLOUDFLARE_NODEJS_COMPAT.md`
+
+### Bước 3: Environment Variables (nếu cần)
 
 Nếu bạn cần environment variables:
 1. Vào **Settings** → **Environment Variables**
 2. Thêm các biến cần thiết (ví dụ: `NEXT_PUBLIC_API_URL`)
 
-### Bước 3: Deploy lại
+### Bước 4: Deploy lại
 
-Sau khi cập nhật build command, Cloudflare Pages sẽ tự động trigger build mới.
+Sau khi cập nhật build command và thêm compatibility flag, Cloudflare Pages sẽ tự động trigger build mới.
 
 ## Lưu ý
 
@@ -49,6 +61,15 @@ Sau khi cập nhật build command, Cloudflare Pages sẽ tự động trigger b
 - **KHÔNG** cần file `wrangler.toml` cho Cloudflare Pages (chỉ cần cho Workers)
 
 ## Troubleshooting
+
+### Lỗi "Node.JS Compatibility Error - no nodejs_compat compatibility flag set"
+**GIẢI PHÁP:** Thêm `nodejs_compat` flag trong Cloudflare Dashboard:
+1. Vào **Settings** → **Runtime** → **Compatibility flags**
+2. Click **Edit** → Thêm flag `nodejs_compat`
+3. Đảm bảo thêm cho cả **Production và Preview**
+4. Click **Save** và **Redeploy**
+
+Xem chi tiết trong `CLOUDFLARE_NODEJS_COMPAT.md`
 
 ### Lỗi dependency conflict (ERESOLVE)
 Nếu gặp lỗi `ERESOLVE unable to resolve dependency tree`:
