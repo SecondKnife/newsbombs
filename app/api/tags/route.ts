@@ -1,18 +1,8 @@
 import { NextResponse } from 'next/server';
 
-const getApiBaseUrl = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
-  if (apiUrl) {
-    if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
-      return apiUrl;
-    }
-    return `http://${apiUrl}`;
-  }
-  // Default to localhost for server-side
-  return 'http://localhost:3001';
-};
+export const runtime = 'edge';
 
-const API_BASE_URL = getApiBaseUrl();
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:3001';
 
 export async function GET() {
   try {

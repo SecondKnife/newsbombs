@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation'
 import { getArticleBySlug, getAllArticles } from '@/lib/api/articles'
 import { Metadata } from 'next'
 
+export const runtime = 'edge';
+
 // Helper function to check if content is HTML
 function isHTMLContent(content: string): boolean {
   // Check if content contains HTML tags

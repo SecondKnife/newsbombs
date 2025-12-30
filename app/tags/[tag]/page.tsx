@@ -5,6 +5,8 @@ import { Metadata } from "next";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 import { getAllArticles } from "@/lib/api/articles";
 
+export const runtime = 'edge';
+
 export async function generateMetadata(
   props: {
     params: Promise<{ tag: string }>;
