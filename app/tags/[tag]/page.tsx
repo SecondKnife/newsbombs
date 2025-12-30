@@ -5,6 +5,9 @@ import { Metadata } from "next";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 import { getAllArticles } from "@/lib/api/articles";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(
   props: {
     params: Promise<{ tag: string }>;
@@ -24,21 +27,8 @@ export async function generateMetadata(
   });
 }
 
-export async function generateStaticParams() {
-  // Fetch all articles to get unique tags
-  const articles = await getAllArticles();
-  const allTags = new Set<string>();
-  articles.forEach((article) => {
-    if (article.tags && Array.isArray(article.tags)) {
-      article.tags.forEach((tag) => allTags.add(tag));
-    }
-  });
-  
-  const paths = Array.from(allTags).map((tag) => ({
-    tag: encodeURI(tag),
-  }));
-  return paths;
-}
+// generateStaticParams removed for Cloudflare Pages compatibility (edge runtime)
+// Pages will be rendered dynamically
 
 export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
   const params = await props.params;

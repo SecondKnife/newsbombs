@@ -2,15 +2,11 @@ import ListLayout from "@layouts/ListLayoutWithTags";
 import { getAllArticles } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-export async function generateStaticParams() {
-  // Fetch articles to calculate total pages
-  const articles = await getAllArticles();
-  const totalPages = Math.ceil(articles.length / POSTS_PER_PAGE);
-  const paths = Array.from({ length: totalPages }, (_, i) => ({
-    page: (i + 1).toString(),
-  }));
-  return paths;
-}
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
+// generateStaticParams removed for Cloudflare Pages compatibility (edge runtime)
+// Pages will be rendered dynamically
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
   const params = await props.params;
