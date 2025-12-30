@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = 'edge';
+
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,16 +29,7 @@ const RichTextEditor = dynamic(
   }
 );
 
-const getApiUrl = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-  if (!apiUrl) return ''; // Use relative path
-  if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
-    return apiUrl;
-  }
-  return `http://${apiUrl}`;
-};
-
-const API_URL = getApiUrl();
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 interface UploadedImage {
   filename: string;
