@@ -9,12 +9,22 @@ Next.js không chạy trực tiếp trên Cloudflare Pages mà cần adapter `@c
 
 1. Vào **Cloudflare Dashboard** → **Workers & Pages** → **newsbombs**
 2. Vào **Settings** → **Builds & deployments**
-3. Cập nhật **Build command** thành:
+3. Cập nhật **Build command** thành (chọn một trong hai):
+   
+   **Option 1:** Dùng script (nếu commit mới nhất có script):
    ```bash
    npm run pages:build
    ```
    
-   **Lưu ý:** File `.npmrc` đã được tạo để tự động dùng `--legacy-peer-deps`, và Next.js đã được downgrade xuống `15.5.2` để tương thích.
+   **Option 2:** Chạy trực tiếp (nếu commit cũ không có script):
+   ```bash
+   npm run build && npx @cloudflare/next-on-pages
+   ```
+   
+   **Lưu ý:** 
+   - File `.npmrc` đã được tạo để tự động dùng `--legacy-peer-deps`
+   - Next.js đã được downgrade xuống `15.5.2` để tương thích
+   - Đảm bảo Cloudflare Pages đang theo dõi branch `main` với commit mới nhất
 4. Cập nhật **Output directory** thành:
    ```
    .vercel/output/static

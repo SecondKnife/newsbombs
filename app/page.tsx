@@ -7,7 +7,13 @@ const HomePage = dynamic(() => import("@/components/home"));
 
 export default async function Home() {
   // Fetch articles from backend API
-  const articles = await getAllArticles();
+  let articles = [];
+  try {
+    articles = await getAllArticles();
+  } catch (error) {
+    console.error('Error loading articles:', error);
+    // Continue with empty array to show page without articles
+  }
   
   // Transform articles to match the expected format
   const blogPosts = articles.map((article) => ({

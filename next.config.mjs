@@ -15,10 +15,6 @@ const nextConfig = {
       ...config.watchOptions,
       ignored: ['**/backend/**', '**/api/**'],
     };
-    // Disable webpack cache for Cloudflare Pages (to avoid large cache files)
-    if (process.env.CF_PAGES || process.env.CI) {
-      config.cache = false;
-    }
     // Exclude api and backend from webpack compilation
     config.resolve = config.resolve || {};
     config.resolve.alias = config.resolve.alias || {};

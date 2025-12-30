@@ -25,17 +25,7 @@ class MyUploadAdapter {
         
         const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
         
-        const getApiUrl = () => {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-          if (!apiUrl) return '';
-          if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
-            return apiUrl;
-          }
-          return `http://${apiUrl}`;
-        };
-        
-        const apiUrl = getApiUrl();
-        fetch(`${apiUrl}/api/articles/ckeditor-upload`, {
+        fetch('http://localhost:3001/api/articles/ckeditor-upload', {
           method: 'POST',
           headers: token ? { 'Authorization': `Bearer ${token}` } : {},
           body: formData,
