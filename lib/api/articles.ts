@@ -9,33 +9,55 @@ function getApiBaseUrl(): string {
     // Method 1: Try process.env (Node.js and some edge runtimes)
     if (typeof process !== 'undefined' && process.env) {
       apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      console.log('[getApiBaseUrl] Method 1 (process.env):', apiUrl || 'not found');
     }
     
     // Method 2: Try globalThis (edge runtime fallback)
     if (!apiUrl && typeof globalThis !== 'undefined') {
       apiUrl = (globalThis as any).NEXT_PUBLIC_API_URL;
+      console.log('[getApiBaseUrl] Method 2 (globalThis):', apiUrl || 'not found');
     }
     
     // Method 3: Try direct access (Cloudflare Pages)
     if (!apiUrl && typeof process !== 'undefined') {
       try {
         apiUrl = (process as any).env?.NEXT_PUBLIC_API_URL;
+        console.log('[getApiBaseUrl] Method 3 (process.env?):', apiUrl || 'not found');
+      } catch (e) {
+        console.log('[getApiBaseUrl] Method 3 error:', e);
+      }
+    }
+    
+    // Method 4: Try accessing via Request context (Cloudflare Pages edge runtime)
+    // In Cloudflare Pages, env vars might be in the request context
+    if (!apiUrl) {
+      try {
+        // This is a fallback - Cloudflare Pages might inject env vars differently
+        const env = (globalThis as any).env || (globalThis as any).ENV;
+        if (env && env.NEXT_PUBLIC_API_URL) {
+          apiUrl = env.NEXT_PUBLIC_API_URL;
+          console.log('[getApiBaseUrl] Method 4 (globalThis.env):', apiUrl);
+        }
       } catch (e) {
         // Ignore
       }
     }
     
     if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
+      console.log('[getApiBaseUrl] Found API URL:', apiUrl.trim());
       return apiUrl.trim();
     }
+    
+    // Fallback: Hardcode for testing (remove after fixing)
+    console.warn('[getApiBaseUrl] No API URL found in env, using fallback');
+    const fallbackUrl = 'http://157.66.100.32:3001';
+    console.log('[getApiBaseUrl] Using fallback URL:', fallbackUrl);
+    return fallbackUrl;
   } catch (error) {
-    // Silently fail and return empty string
-    console.warn('Error reading API URL from environment:', error);
+    console.error('[getApiBaseUrl] Error reading API URL from environment:', error);
+    // Fallback for testing
+    return 'http://157.66.100.32:3001';
   }
-  
-  // On Cloudflare Pages without API URL, return empty string
-  // This will cause getAllArticles to return empty array gracefully
-  return '';
 }
 
 // Get API base URL at runtime (not at module load time)
