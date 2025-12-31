@@ -27,16 +27,46 @@ function getApiBaseUrl(): string {
   return '';
 }
 
-const API_BASE_URL = getApiBaseUrl();
-
 export async function GET() {
   try {
+    // Get API URL at runtime (not at module level) for edge runtime compatibility
+    const API_BASE_URL = getApiBaseUrl();
+    
     // If no API URL is configured, return empty tags
     if (!API_BASE_URL) {
       console.warn('No API_BASE_URL configured, returning empty tags');
       return NextResponse.json({});
     }
     
+    // Check if setTimeout is available (requires nodejs_compat flag)
+    if (typeof setTimeout === 'undefined' || typeof clearTimeout === 'undefined') {
+      // Fallback: fetch without timeout
+      const response = await fetch(`${API_BASE_URL}/api/articles`, {
+        next: { revalidate: 60 },
+      });
+      
+      if (!response.ok) {
+        console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
+        return NextResponse.json({});
+      }
+      
+      const articles = await response.json();
+      const tagCounts: Record<string, number> = {};
+      
+      if (Array.isArray(articles)) {
+        articles.forEach((article: any) => {
+          if (article.tags && Array.isArray(article.tags)) {
+            article.tags.forEach((tag: string) => {
+              tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+          }
+        });
+      }
+      
+      return NextResponse.json(tagCounts);
+    }
+    
+    // Use timeout if setTimeout is available
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     
