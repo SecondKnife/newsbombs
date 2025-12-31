@@ -45,7 +45,8 @@ export function getApiBaseUrlRuntime(): string {
 }
 
 // For backward compatibility, but prefer using getApiBaseUrlRuntime() in edge runtime
-const API_BASE_URL = getApiBaseUrl();
+// Note: Don't initialize at module level in edge runtime - use getApiBaseUrlRuntime() instead
+// const API_BASE_URL = getApiBaseUrl(); // Removed - causes issues in edge runtime
 
 export interface Article {
   id: string;
@@ -68,57 +69,44 @@ export interface Article {
 // Note: setTimeout requires nodejs_compat flag in Cloudflare Pages
 // In edge runtime, we use AbortController with a Promise-based timeout
 async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 5000): Promise<Response> {
+  // Check if setTimeout is available (requires nodejs_compat flag)
+  if (typeof setTimeout === 'undefined' || typeof clearTimeout === 'undefined') {
+    // Fallback: fetch without timeout if setTimeout is not available
+    // This happens when nodejs_compat flag is not set
+    return await fetch(url, options);
+  }
+  
   try {
-    // Use AbortController for timeout (works in edge runtime)
+    // Use AbortController for timeout (works in edge runtime with nodejs_compat)
     const controller = new AbortController();
     
     // Create timeout promise
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      // Try to use setTimeout if available (requires nodejs_compat)
-      if (typeof setTimeout !== 'undefined') {
-        timeoutId = setTimeout(() => {
-          controller.abort();
-          reject(new Error('Request timeout'));
-        }, timeout);
-      } else {
-        // Fallback: use a Promise that never resolves (no timeout)
-        // This is acceptable for edge runtime without nodejs_compat
-      }
-    });
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
     
     try {
-      const fetchPromise = fetch(url, {
+      const response = await fetch(url, {
         ...options,
         signal: controller.signal,
       });
       
-      // Race between fetch and timeout
-      const response = await Promise.race([fetchPromise, timeoutPromise]);
-      
-      // Clear timeout if fetch completed
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      // Clear timeout if fetch completed successfully
+      clearTimeout(timeoutId);
       
       return response;
     } catch (error: any) {
       // Clear timeout on error
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      clearTimeout(timeoutId);
       
-      // If it's an AbortError, it might be from timeout
-      if (error.name === 'AbortError' || error.message === 'Request timeout') {
+      // If it's an AbortError, it's from timeout
+      if (error.name === 'AbortError') {
         throw new Error('Request timeout');
       }
       throw error;
     }
   } catch (error) {
-    // If setTimeout is not available, just fetch without timeout
-    if (error instanceof TypeError && error.message.includes('setTimeout')) {
-      return await fetch(url, options);
-    }
+    // Re-throw any errors
     throw error;
   }
 }
