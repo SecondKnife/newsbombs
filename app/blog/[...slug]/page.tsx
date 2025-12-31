@@ -3,7 +3,7 @@ import PostLayout from '@layouts/PostLayout'
 import PostBanner from '@layouts/PostBanner'
 import siteMetadata from '@data/siteMetadata'
 import { notFound } from 'next/navigation'
-import { getArticleBySlug, getAllArticles } from '@/lib/api/articles'
+import { getArticleBySlug, getAllArticles, type Article } from '@/lib/api/articles'
 import { Metadata } from 'next'
 
 export const runtime = 'edge';
@@ -100,7 +100,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
     }
 
     // Fetch all articles for prev/next navigation with error handling
-    let allArticles = [];
+    let allArticles: Article[] = [];
     try {
       allArticles = await getAllArticles();
       if (!Array.isArray(allArticles)) {
