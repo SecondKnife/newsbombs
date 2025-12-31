@@ -152,10 +152,12 @@ export async function getAllArticles(): Promise<Article[]> {
     }
     
     try {
+      // Note: next: { revalidate } doesn't work in Cloudflare Pages edge runtime
+      // Use standard fetch with cache headers instead
       const response = await fetchWithTimeout(url, {
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
         headers: {
           'Accept': 'application/json',
+          'Cache-Control': 'public, max-age=60, s-maxage=60',
         },
       }, 5000);
       
@@ -198,8 +200,12 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       return null;
     }
     
+    // Note: next: { revalidate } doesn't work in Cloudflare Pages edge runtime
     const response = await fetchWithTimeout(url, {
-      next: { revalidate: 60 },
+      headers: {
+        'Accept': 'application/json',
+        'Cache-Control': 'public, max-age=60, s-maxage=60',
+      },
     }, 5000);
     
     if (!response.ok) {
@@ -239,8 +245,12 @@ export async function getArticleById(id: string): Promise<Article | null> {
       return null;
     }
     
+    // Note: next: { revalidate } doesn't work in Cloudflare Pages edge runtime
     const response = await fetchWithTimeout(url, {
-      next: { revalidate: 60 },
+      headers: {
+        'Accept': 'application/json',
+        'Cache-Control': 'public, max-age=60, s-maxage=60',
+      },
     }, 5000);
     
     if (!response.ok) {
