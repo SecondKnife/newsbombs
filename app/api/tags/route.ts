@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+// Removed edge runtime - use static generation instead
+// export const runtime = 'edge';
 
 // Get API base URL with better fallback handling
 function getApiBaseUrl(): string {

@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { revalidateTag } from "next/cache";
+// Keep edge runtime for API routes that need it
 export const runtime = 'edge';
 export const maxDuration = 5;
 export async function GET(request: NextRequest) {

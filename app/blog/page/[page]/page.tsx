@@ -2,11 +2,27 @@ import ListLayout from "@layouts/ListLayoutWithTags";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+// Static generation - fetch data at build time
+export const dynamic = 'force-static';
+export const dynamicParams = false; // Return 404 for unknown pages
 
-// generateStaticParams removed for Cloudflare Pages compatibility (edge runtime)
-// Pages will be rendered dynamically
+// Generate static params for pagination at build time
+export async function generateStaticParams() {
+  try {
+    const articles = await getAllArticles();
+    if (!Array.isArray(articles)) {
+      return [{ page: '1' }];
+    }
+    const totalPages = Math.ceil(articles.length / POSTS_PER_PAGE);
+    // Generate params for all pages
+    return Array.from({ length: totalPages }, (_, i) => ({
+      page: String(i + 1),
+    }));
+  } catch (error: any) {
+    console.error('Error generating static params for pagination:', error?.message || error);
+    return [{ page: '1' }];
+  }
+}
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
   try {

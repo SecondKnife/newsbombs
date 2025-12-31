@@ -1,6 +1,7 @@
 import EditArticleClient from "./EditArticleClient";
 
-export const runtime = 'edge';
+// Removed edge runtime - use static generation instead
+// export const runtime = 'edge';
 
 export default function EditArticle() {
   return <EditArticleClient />;

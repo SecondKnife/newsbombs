@@ -6,8 +6,9 @@ import { notFound } from 'next/navigation'
 import { getArticleBySlug, getAllArticles, type Article } from '@/lib/api/articles'
 import { Metadata } from 'next'
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+// Static generation - fetch data at build time
+export const dynamic = 'force-static';
+export const dynamicParams = false; // Return 404 for unknown slugs
 
 // Helper function to check if content is HTML
 function isHTMLContent(content: string): boolean {
@@ -78,8 +79,22 @@ export async function generateMetadata({
   }
 }
 
-// generateStaticParams removed for Cloudflare Pages compatibility (edge runtime)
-// Pages will be rendered dynamically
+// Generate static params for all articles at build time
+export async function generateStaticParams() {
+  try {
+    const articles = await getAllArticles();
+    if (!Array.isArray(articles)) {
+      return [];
+    }
+    // Return array of slug arrays for each article
+    return articles.map((article) => ({
+      slug: article.slug.split('/'),
+    }));
+  } catch (error: any) {
+    console.error('Error generating static params:', error?.message || error);
+    return [];
+  }
+}
 
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
   try {

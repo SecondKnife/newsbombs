@@ -5,8 +5,9 @@ import { Metadata } from "next";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+// Static generation - fetch data at build time
+export const dynamic = 'force-static';
+export const dynamicParams = false; // Return 404 for unknown tags
 
 export async function generateMetadata(
   props: {
@@ -27,8 +28,29 @@ export async function generateMetadata(
   });
 }
 
-// generateStaticParams removed for Cloudflare Pages compatibility (edge runtime)
-// Pages will be rendered dynamically
+// Generate static params for all tags at build time
+export async function generateStaticParams() {
+  try {
+    const articles = await getAllArticles();
+    if (!Array.isArray(articles)) {
+      return [];
+    }
+    // Get all unique tags
+    const allTags = new Set<string>();
+    articles.forEach((article) => {
+      if (article.tags && Array.isArray(article.tags)) {
+        article.tags.forEach((tag) => allTags.add(tag));
+      }
+    });
+    // Return array of tag objects
+    return Array.from(allTags).map((tag) => ({
+      tag: encodeURIComponent(tag),
+    }));
+  } catch (error: any) {
+    console.error('Error generating static params for tags:', error?.message || error);
+    return [];
+  }
+}
 
 export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
   // Get tag from params first, before try-catch
