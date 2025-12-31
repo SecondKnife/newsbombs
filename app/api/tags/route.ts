@@ -4,17 +4,27 @@ export const runtime = 'edge';
 
 // Get API base URL with better fallback handling
 function getApiBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+  try {
+    // Try multiple methods to get environment variable
+    let apiUrl: string | undefined;
+    
+    if (typeof process !== 'undefined' && process.env) {
+      apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
+    }
+    
+    if (!apiUrl && typeof globalThis !== 'undefined') {
+      apiUrl = (globalThis as any).NEXT_PUBLIC_API_URL;
+    }
+    
+    if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
+      return apiUrl.trim();
+    }
+  } catch (error) {
+    console.warn('Error reading API URL:', error);
   }
-  if (process.env.API_URL) {
-    return process.env.API_URL;
-  }
-  // On Cloudflare Pages, return empty string if no API URL is set
-  if (typeof process !== 'undefined' && process.env.CF_PAGES) {
-    return '';
-  }
-  return 'http://localhost:3001';
+  
+  // On Cloudflare Pages without API URL, return empty string
+  return '';
 }
 
 const API_BASE_URL = getApiBaseUrl();

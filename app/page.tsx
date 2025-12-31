@@ -20,7 +20,15 @@ export default async function Home() {
     // Fetch articles from backend API
     let articles: Article[] = [];
     try {
-      articles = await getAllArticles();
+      // Wrap in additional try-catch for edge runtime compatibility
+      try {
+        articles = await getAllArticles();
+      } catch (fetchError: any) {
+        // Handle fetch errors gracefully
+        console.warn('Failed to fetch articles:', fetchError?.message || fetchError);
+        articles = [];
+      }
+      
       // Ensure articles is always an array
       if (!Array.isArray(articles)) {
         console.warn('getAllArticles returned non-array, using empty array');
