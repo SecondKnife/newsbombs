@@ -31,10 +31,17 @@ export async function generateMetadata(
 // Pages will be rendered dynamically
 
 export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
+  // Get tag from params first, before try-catch
+  let tag = 'Unknown';
   try {
     const params = await props.params;
-    const tag = decodeURI(params.tag);
-    
+    tag = decodeURI(params.tag);
+  } catch (error: any) {
+    console.error('Error getting tag from params:', error?.message || error);
+    // tag will remain 'Unknown'
+  }
+  
+  try {
     // Fetch articles from backend with error handling
     let articles: Article[] = [];
     try {
@@ -52,44 +59,44 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
       article.tags && article.tags.includes(tag)
     );
   
-  // Transform articles to match expected format
-  const posts = filteredArticles.map((article) => ({
-    ...article,
-    name: article.slug,
-    excerpt: article.summary,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: article.title,
-      datePublished: article.date,
-      dateModified: article.lastmod || article.date,
-    },
-    body: {
-      code: article.content,
-    },
-    toc: [],
-  }));
-  
-  // Capitalize first letter and convert space to dash
-  const title = tag[0].toUpperCase() + tag.split(" ").join("-").slice(1);
-  const pageNumber = 1;
-  const initialDisplayPosts = posts.slice(
-    POSTS_PER_PAGE * (pageNumber - 1),
-    POSTS_PER_PAGE * pageNumber
-  );
-  const pagination = {
-    currentPage: pageNumber,
-    totalPages: Math.ceil(posts.length / POSTS_PER_PAGE),
-  };
-  
-  return (
-    <ListLayout
-      posts={posts}
-      initialDisplayPosts={initialDisplayPosts}
-      title={title}
-      pagination={pagination}
-    />
-  );
+    // Transform articles to match expected format
+    const posts = filteredArticles.map((article) => ({
+      ...article,
+      name: article.slug,
+      excerpt: article.summary,
+      structuredData: {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: article.title,
+        datePublished: article.date,
+        dateModified: article.lastmod || article.date,
+      },
+      body: {
+        code: article.content,
+      },
+      toc: [],
+    }));
+    
+    // Capitalize first letter and convert space to dash
+    const title = tag[0].toUpperCase() + tag.split(" ").join("-").slice(1);
+    const pageNumber = 1;
+    const initialDisplayPosts = posts.slice(
+      POSTS_PER_PAGE * (pageNumber - 1),
+      POSTS_PER_PAGE * pageNumber
+    );
+    const pagination = {
+      currentPage: pageNumber,
+      totalPages: Math.ceil(posts.length / POSTS_PER_PAGE),
+    };
+    
+    return (
+      <ListLayout
+        posts={posts}
+        initialDisplayPosts={initialDisplayPosts}
+        title={title}
+        pagination={pagination}
+      />
+    );
   } catch (error: any) {
     console.error('Error rendering tag page:', error?.message || error);
     // Return empty page instead of crashing
