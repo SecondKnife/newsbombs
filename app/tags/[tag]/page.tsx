@@ -6,6 +6,8 @@ import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 
 // Static generation - fetch data at build time
+// Note: Cannot use edge runtime with generateStaticParams in Next.js
+// Cloudflare Pages will handle static routes automatically
 export const dynamic = 'force-static';
 export const dynamicParams = false; // Return 404 for unknown tags
 

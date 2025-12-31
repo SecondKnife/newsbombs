@@ -7,6 +7,8 @@ import { getArticleBySlug, getAllArticles, type Article } from '@/lib/api/articl
 import { Metadata } from 'next'
 
 // Static generation - fetch data at build time
+// Note: Cannot use edge runtime with generateStaticParams in Next.js
+// Cloudflare Pages will handle static routes automatically
 export const dynamic = 'force-static';
 export const dynamicParams = false; // Return 404 for unknown slugs
 

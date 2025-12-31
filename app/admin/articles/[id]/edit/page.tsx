@@ -1,7 +1,7 @@
 import EditArticleClient from "./EditArticleClient";
 
-// Removed edge runtime - use static generation instead
-// export const runtime = 'edge';
+// Edge runtime required for Cloudflare Pages
+export const runtime = 'edge';
 
 export default function EditArticle() {
   return <EditArticleClient />;

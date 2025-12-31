@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-// Removed edge runtime - use static generation instead
-// export const runtime = 'edge';
+// Edge runtime required for Cloudflare Pages
+export const runtime = 'edge';
 
 // Get API base URL with better fallback handling
 function getApiBaseUrl(): string {
