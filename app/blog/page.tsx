@@ -8,11 +8,21 @@ export const runtime = 'edge';
 export const metadata = genPageMetadata({ title: "Blog" });
 
 export default async function BlogPage(props: any) {
-  // Fetch articles from backend API
-  const articles = await getAllArticles();
+  // Fetch articles from backend API with error handling
+  let articles = [];
+  try {
+    articles = await getAllArticles();
+    // Ensure articles is always an array
+    if (!Array.isArray(articles)) {
+      articles = [];
+    }
+  } catch (error: any) {
+    console.error('Error loading articles:', error?.message || error);
+    articles = [];
+  }
   
   // Transform articles to match the expected format
-  const posts = articles.map((article) => ({
+  const posts = (articles || []).map((article) => ({
     ...article,
     name: article.slug,
     excerpt: article.summary,

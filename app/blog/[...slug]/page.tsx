@@ -29,13 +29,14 @@ export async function generateMetadata({
 }: {
   params: PageParams
 }): Promise<Metadata | undefined> {
-  const params = await asyncParams;
-  const slug = decodeURI(params.slug.join('/'))
-  const article = await getArticleBySlug(slug)
-  
-  if (!article) {
-    return undefined
-  }
+  try {
+    const params = await asyncParams;
+    const slug = decodeURI(params.slug.join('/'))
+    const article = await getArticleBySlug(slug)
+    
+    if (!article) {
+      return undefined
+    }
 
   const publishedAt = new Date(article.date).toISOString()
   const modifiedAt = new Date(article.lastmod || article.date).toISOString()
@@ -71,27 +72,48 @@ export async function generateMetadata({
       images: imageList,
     },
   }
+  } catch (error) {
+    // Return undefined if error occurs
+    return undefined;
+  }
 }
 
 // generateStaticParams removed for Cloudflare Pages compatibility (edge runtime)
 // Pages will be rendered dynamically
 
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
-  const params = await props.params;
-  const slug = decodeURI(params.slug.join('/'))
-  
-  // Fetch article from backend
-  const article = await getArticleBySlug(slug)
-  
-  if (!article) {
-    return notFound()
-  }
+  try {
+    const params = await props.params;
+    const slug = decodeURI(params.slug.join('/'))
+    
+    // Fetch article from backend with error handling
+    let article;
+    try {
+      article = await getArticleBySlug(slug);
+    } catch (error: any) {
+      console.error('Error fetching article:', error?.message || error);
+      return notFound();
+    }
+    
+    if (!article) {
+      return notFound()
+    }
 
-  // Fetch all articles for prev/next navigation
-  const allArticles = await getAllArticles()
-  const sortedArticles = allArticles.sort((a, b) => 
-    new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
+    // Fetch all articles for prev/next navigation with error handling
+    let allArticles = [];
+    try {
+      allArticles = await getAllArticles();
+      if (!Array.isArray(allArticles)) {
+        allArticles = [];
+      }
+    } catch (error: any) {
+      console.error('Error fetching all articles:', error?.message || error);
+      allArticles = [];
+    }
+    
+    const sortedArticles = allArticles.sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
   
   const postIndex = sortedArticles.findIndex((p) => p.slug === slug)
   const prev = postIndex < sortedArticles.length - 1 ? sortedArticles[postIndex + 1] : null
@@ -173,4 +195,8 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       </Layout>
     </>
   )
+  } catch (error: any) {
+    console.error('Error rendering article page:', error?.message || error);
+    return notFound();
+  }
 }

@@ -31,16 +31,26 @@ export async function generateMetadata(
 // Pages will be rendered dynamically
 
 export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
-  const params = await props.params;
-  const tag = decodeURI(params.tag);
-  
-  // Fetch articles from backend
-  const articles = await getAllArticles();
-  
-  // Filter articles by tag
-  const filteredArticles = articles.filter((article) => 
-    article.tags && article.tags.includes(tag)
-  );
+  try {
+    const params = await props.params;
+    const tag = decodeURI(params.tag);
+    
+    // Fetch articles from backend with error handling
+    let articles = [];
+    try {
+      articles = await getAllArticles();
+      if (!Array.isArray(articles)) {
+        articles = [];
+      }
+    } catch (error: any) {
+      console.error('Error loading articles:', error?.message || error);
+      articles = [];
+    }
+    
+    // Filter articles by tag
+    const filteredArticles = articles.filter((article) => 
+      article.tags && article.tags.includes(tag)
+    );
   
   // Transform articles to match expected format
   const posts = filteredArticles.map((article) => ({
@@ -80,4 +90,19 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
       pagination={pagination}
     />
   );
+  } catch (error: any) {
+    console.error('Error rendering tag page:', error?.message || error);
+    // Return empty page instead of crashing
+    return (
+      <ListLayout
+        posts={[]}
+        initialDisplayPosts={[]}
+        title={tag}
+        pagination={{
+          currentPage: 1,
+          totalPages: 0,
+        }}
+      />
+    );
+  }
 }

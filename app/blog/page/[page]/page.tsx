@@ -9,13 +9,23 @@ export const dynamic = 'force-dynamic';
 // Pages will be rendered dynamically
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
-  const params = await props.params;
-  
-  // Fetch articles from backend
-  const articles = await getAllArticles();
-  
-  // Transform articles to match expected format
-  const posts = articles.map((article) => ({
+  try {
+    const params = await props.params;
+    
+    // Fetch articles from backend with error handling
+    let articles = [];
+    try {
+      articles = await getAllArticles();
+      if (!Array.isArray(articles)) {
+        articles = [];
+      }
+    } catch (error: any) {
+      console.error('Error loading articles:', error?.message || error);
+      articles = [];
+    }
+    
+    // Transform articles to match expected format
+    const posts = (articles || []).map((article) => ({
     ...article,
     name: article.slug,
     excerpt: article.summary,
@@ -50,4 +60,19 @@ export default async function Page(props: { params: Promise<{ page: string }> })
       title="All Posts"
     />
   );
+  } catch (error: any) {
+    console.error('Error rendering blog page:', error?.message || error);
+    // Return empty page instead of crashing
+    return (
+      <ListLayout
+        posts={[]}
+        initialDisplayPosts={[]}
+        pagination={{
+          currentPage: 1,
+          totalPages: 0,
+        }}
+        title="All Posts"
+      />
+    );
+  }
 }
