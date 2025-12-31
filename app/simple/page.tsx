@@ -1,4 +1,5 @@
-export const runtime = 'edge';
+// Removed edge runtime - not compatible with Cloudflare Pages
+// export const runtime = 'edge';
 
 export default function SimplePage() {
   return (

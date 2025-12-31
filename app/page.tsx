@@ -1,7 +1,8 @@
 import dynamic from "next/dynamic";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 
-export const runtime = 'edge';
+// Removed edge runtime - not compatible with Cloudflare Pages
+// export const runtime = 'edge';
 
 // Use dynamic import with better error handling
 const HomePage = dynamic(() => import("@/components/home").catch((error) => {

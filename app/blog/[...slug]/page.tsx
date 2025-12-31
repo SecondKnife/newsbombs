@@ -6,7 +6,8 @@ import { notFound } from 'next/navigation'
 import { getArticleBySlug, getAllArticles, type Article } from '@/lib/api/articles'
 import { Metadata } from 'next'
 
-export const runtime = 'edge';
+// Removed edge runtime - not compatible with Cloudflare Pages
+// export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 // Helper function to check if content is HTML

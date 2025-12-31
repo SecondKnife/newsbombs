@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { revalidateTag } from "next/cache";
-export const runtime = 'edge';
+// Removed edge runtime - not compatible with Cloudflare Pages
+// export const runtime = 'edge';
 export const maxDuration = 5;
 export async function GET(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get("secret");

@@ -3,7 +3,8 @@ import { genPageMetadata } from "data/seo";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-export const runtime = 'edge';
+// Removed edge runtime - not compatible with Cloudflare Pages
+// export const runtime = 'edge';
 
 export const metadata = genPageMetadata({ title: "Blog" });
 

@@ -5,7 +5,8 @@ import { Metadata } from "next";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 
-export const runtime = 'edge';
+// Removed edge runtime - not compatible with Cloudflare Pages
+// export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(
