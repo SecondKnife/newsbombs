@@ -92,11 +92,27 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       article = await getArticleBySlug(slug);
     } catch (error: any) {
       console.error('Error fetching article:', error?.message || error);
-      return notFound();
+      // Return simple error page instead of notFound() for edge runtime compatibility
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Article not found</h1>
+            <p className="mt-4">The article you are looking for does not exist.</p>
+          </div>
+        </div>
+      );
     }
     
     if (!article) {
-      return notFound()
+      // Return simple error page instead of notFound() for edge runtime compatibility
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Article not found</h1>
+            <p className="mt-4">The article you are looking for does not exist.</p>
+          </div>
+        </div>
+      );
     }
 
     // Fetch all articles for prev/next navigation with error handling
@@ -111,92 +127,128 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       allArticles = [];
     }
     
-    const sortedArticles = allArticles.sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    )
+    // Safely sort articles with error handling
+    let sortedArticles: Article[] = [];
+    try {
+      sortedArticles = allArticles.sort((a, b) => {
+        try {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        } catch {
+          return 0;
+        }
+      });
+    } catch (error: any) {
+      console.error('Error sorting articles:', error?.message || error);
+      sortedArticles = allArticles;
+    }
   
-  const postIndex = sortedArticles.findIndex((p) => p.slug === slug)
-  const prev = postIndex < sortedArticles.length - 1 ? sortedArticles[postIndex + 1] : null
-  const next = postIndex > 0 ? sortedArticles[postIndex - 1] : null
+    const postIndex = sortedArticles.findIndex((p) => p.slug === slug)
+    const prev = postIndex < sortedArticles.length - 1 ? sortedArticles[postIndex + 1] : null
+    const next = postIndex > 0 ? sortedArticles[postIndex - 1] : null
 
-  // Transform article to match expected format
-  const mainContent = {
-    ...article,
-    name: article.slug,
-    slug: article.slug,
-    path: `blog/${article.slug}`,
-    filePath: `blog/${article.slug}`,
-    excerpt: article.summary,
-    structuredData: {
+    // Transform article to match expected format with error handling
+    let mainContent;
+    try {
+      mainContent = {
+        ...article,
+        name: article.slug || '',
+        slug: article.slug || '',
+        path: `blog/${article.slug || ''}`,
+        filePath: `blog/${article.slug || ''}`,
+        excerpt: article.summary || '',
+        structuredData: {
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: article.title || '',
+          datePublished: article.date || new Date().toISOString(),
+          dateModified: article.lastmod || article.date || new Date().toISOString(),
+          author: {
+            '@type': 'Person',
+            name: siteMetadata.author || 'Unknown',
+          },
+        },
+        body: {
+          code: article.content || '',
+        },
+        toc: [],
+        authors: ['default'],
+      };
+    } catch (error: any) {
+      console.error('Error transforming article:', error?.message || error);
+      throw error;
+    }
+
+    const authorDetails = [{
+      name: siteMetadata.author || 'Unknown',
+      slug: 'default',
+    }]
+
+    const jsonLd = {
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
-      headline: article.title,
-      datePublished: article.date,
-      dateModified: article.lastmod || article.date,
+      headline: article.title || '',
+      datePublished: article.date || new Date().toISOString(),
+      dateModified: article.lastmod || article.date || new Date().toISOString(),
       author: {
         '@type': 'Person',
-        name: siteMetadata.author,
+        name: siteMetadata.author || 'Unknown',
       },
-    },
-    body: {
-      code: article.content,
-    },
-    toc: [],
-    authors: ['default'],
-  }
+    }
 
-  const authorDetails = [{
-    name: siteMetadata.author,
-    slug: 'default',
-  }]
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: article.title,
-    datePublished: article.date,
-    dateModified: article.lastmod || article.date,
-    author: {
-      '@type': 'Person',
-      name: siteMetadata.author,
-    },
-  }
-
-  const Layout = layouts[article.layout as keyof typeof layouts] || layouts[defaultLayout]
-  
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <Layout 
-        content={mainContent} 
-        authorDetails={authorDetails} 
-        next={next ? {
-          path: `blog/${next.slug}`,
-          title: next.title,
-        } : undefined} 
-        prev={prev ? {
-          path: `blog/${prev.slug}`,
-          title: prev.title,
-        } : undefined}
-      >
-        {isHTMLContent(article.content) ? (
-          <div 
-            className="article-content prose max-w-none dark:prose-invert prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:leading-relaxed prose-a:text-primary-500 prose-img:rounded-lg prose-img:mx-auto prose-figure:mx-auto prose-figure:text-center"
-            dangerouslySetInnerHTML={{ __html: article.content }}
+    const Layout = layouts[article.layout as keyof typeof layouts] || layouts[defaultLayout]
+    
+    try {
+      return (
+        <>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
-        ) : (
-          <div className="article-content prose max-w-none dark:prose-invert whitespace-pre-wrap">
-            {article.content}
-          </div>
-        )}
-      </Layout>
-    </>
-  )
+          <Layout 
+            content={mainContent} 
+            authorDetails={authorDetails} 
+            next={next ? {
+              path: `blog/${next.slug}`,
+              title: next.title,
+            } : undefined} 
+            prev={prev ? {
+              path: `blog/${prev.slug}`,
+              title: prev.title,
+            } : undefined}
+          >
+            {isHTMLContent(article.content || '') ? (
+              <div 
+                className="article-content prose max-w-none dark:prose-invert prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:leading-relaxed prose-a:text-primary-500 prose-img:rounded-lg prose-img:mx-auto prose-figure:mx-auto prose-figure:text-center"
+                dangerouslySetInnerHTML={{ __html: article.content || '' }}
+              />
+            ) : (
+              <div className="article-content prose max-w-none dark:prose-invert whitespace-pre-wrap">
+                {article.content || ''}
+              </div>
+            )}
+          </Layout>
+        </>
+      );
+    } catch (renderError: any) {
+      console.error('Error rendering Layout:', renderError?.message || renderError);
+      // Fallback: return simple article view
+      return (
+        <div className="min-h-screen p-8">
+          <h1 className="text-3xl font-bold mb-4">{article.title || 'Untitled'}</h1>
+          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: article.content || '' }} />
+        </div>
+      );
+    }
   } catch (error: any) {
     console.error('Error rendering article page:', error?.message || error);
-    return notFound();
+    // Return simple error page instead of notFound() for edge runtime compatibility
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Error loading article</h1>
+          <p className="mt-4">An error occurred while loading this article.</p>
+        </div>
+      </div>
+    );
   }
 }
