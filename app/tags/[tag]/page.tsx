@@ -3,7 +3,7 @@ import ListLayout from "@layouts/ListLayoutWithTags";
 import { genPageMetadata } from "@data/seo";
 import { Metadata } from "next";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
-import { getAllArticles } from "@/lib/api/articles";
+import { getAllArticles, type Article } from "@/lib/api/articles";
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -36,7 +36,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
     const tag = decodeURI(params.tag);
     
     // Fetch articles from backend with error handling
-    let articles = [];
+    let articles: Article[] = [];
     try {
       articles = await getAllArticles();
       if (!Array.isArray(articles)) {

@@ -1,5 +1,5 @@
 import ListLayout from "@layouts/ListLayoutWithTags";
-import { getAllArticles } from "@/lib/api/articles";
+import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
 export const runtime = 'edge';
@@ -13,7 +13,7 @@ export default async function Page(props: { params: Promise<{ page: string }> })
     const params = await props.params;
     
     // Fetch articles from backend with error handling
-    let articles = [];
+    let articles: Article[] = [];
     try {
       articles = await getAllArticles();
       if (!Array.isArray(articles)) {

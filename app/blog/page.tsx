@@ -1,6 +1,6 @@
 import ListLayout from "@layouts/ListLayoutWithTags";
 import { genPageMetadata } from "data/seo";
-import { getAllArticles } from "@/lib/api/articles";
+import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
 export const runtime = 'edge';
@@ -9,7 +9,7 @@ export const metadata = genPageMetadata({ title: "Blog" });
 
 export default async function BlogPage(props: any) {
   // Fetch articles from backend API with error handling
-  let articles = [];
+  let articles: Article[] = [];
   try {
     articles = await getAllArticles();
     // Ensure articles is always an array
