@@ -87,49 +87,16 @@ export interface Article {
   updatedAt: string;
 }
 
-// Helper function to create fetch with timeout
-// Note: setTimeout requires nodejs_compat flag in Cloudflare Pages
-// In edge runtime, we use AbortController with a Promise-based timeout
-async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 5000): Promise<Response> {
-  // Check if setTimeout is available (requires nodejs_compat flag)
-  if (typeof setTimeout === 'undefined' || typeof clearTimeout === 'undefined') {
-    // Fallback: fetch without timeout if setTimeout is not available
-    // This happens when nodejs_compat flag is not set
-    return await fetch(url, options);
-  }
-  
+// Helper function to create fetch
+// Simplified for Cloudflare Pages edge runtime - no timeout needed (Cloudflare has built-in timeout)
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 10000): Promise<Response> {
+  // In Cloudflare Pages edge runtime, just use simple fetch
+  // Cloudflare has built-in timeout protection
   try {
-    // Use AbortController for timeout (works in edge runtime with nodejs_compat)
-    const controller = new AbortController();
-    
-    // Create timeout promise
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, timeout);
-    
-    try {
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      });
-      
-      // Clear timeout if fetch completed successfully
-      clearTimeout(timeoutId);
-      
-      return response;
-    } catch (error: any) {
-      // Clear timeout on error
-      clearTimeout(timeoutId);
-      
-      // If it's an AbortError, it's from timeout
-      if (error.name === 'AbortError') {
-        throw new Error('Request timeout');
-      }
-      throw error;
-    }
-  } catch (error) {
-    // Re-throw any errors
-    throw error;
+    return await fetch(url, options);
+  } catch (error: any) {
+    // Re-throw with more context
+    throw new Error(`Fetch failed: ${error.message || error}`);
   }
 }
 
