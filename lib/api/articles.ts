@@ -129,25 +129,32 @@ export async function getAllArticles(): Promise<Article[]> {
       return [];
     }
     
-    const response = await fetchWithTimeout(url, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
-    }, 5000);
-    
-    if (!response.ok) {
-      console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
+    try {
+      const response = await fetchWithTimeout(url, {
+        next: { revalidate: 60 }, // Revalidate every 60 seconds
+        headers: {
+          'Accept': 'application/json',
+        },
+      }, 5000);
+      
+      if (!response.ok) {
+        console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
+        return [];
+      }
+      
+      const data = await response.json();
+      // Ensure we return an array
+      return Array.isArray(data) ? data : [];
+    } catch (fetchError: any) {
+      // Handle fetch errors specifically
+      console.error('Fetch error:', fetchError?.message || fetchError);
+      // Return empty array instead of throwing
       return [];
     }
-    
-    const data = await response.json();
-    // Ensure we return an array
-    return Array.isArray(data) ? data : [];
   } catch (error: any) {
-    // Handle network errors gracefully
-    if (error.name === 'AbortError') {
-      console.error('Request timeout while fetching articles');
-    } else {
-      console.error('Error fetching articles:', error.message || error);
-    }
+    // Handle any other errors gracefully
+    console.error('Error in getAllArticles:', error?.message || error);
+    // Always return empty array, never throw
     return [];
   }
 }
