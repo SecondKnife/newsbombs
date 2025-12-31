@@ -2,8 +2,7 @@ import ListLayout from "@layouts/ListLayoutWithTags";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-// Removed edge runtime - not compatible with Cloudflare Pages
-// export const runtime = 'edge';
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 // generateStaticParams removed for Cloudflare Pages compatibility (edge runtime)

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
-// Removed edge runtime - not compatible with Cloudflare Pages
-// export const runtime = 'edge';
+export const runtime = 'edge';
 
 // Get API base URL with better fallback handling
 function getApiBaseUrl(): string {
