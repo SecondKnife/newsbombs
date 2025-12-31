@@ -2,8 +2,3 @@ name = "newsbombs"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
-
-# Environment variables for Cloudflare Pages
-# Note: These are also set in Cloudflare Dashboard, but adding here for consistency
-[vars]
-NEXT_PUBLIC_API_URL = "http://157.66.100.32:3001"
