@@ -39,44 +39,13 @@ export async function GET() {
       return NextResponse.json({});
     }
     
-    // Check if setTimeout is available (requires nodejs_compat flag)
-    if (typeof setTimeout === 'undefined' || typeof clearTimeout === 'undefined') {
-      // Fallback: fetch without timeout
-      const response = await fetch(`${API_BASE_URL}/api/articles`, {
-        next: { revalidate: 60 },
-      });
-      
-      if (!response.ok) {
-        console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
-        return NextResponse.json({});
-      }
-      
-      const articles = await response.json();
-      const tagCounts: Record<string, number> = {};
-      
-      if (Array.isArray(articles)) {
-        articles.forEach((article: any) => {
-          if (article.tags && Array.isArray(article.tags)) {
-            article.tags.forEach((tag: string) => {
-              tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-            });
-          }
-        });
-      }
-      
-      return NextResponse.json(tagCounts);
-    }
-    
-    // Use timeout if setTimeout is available
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
+    // Simple fetch for Edge Runtime (no next.revalidate, no timeout)
     const response = await fetch(`${API_BASE_URL}/api/articles`, {
-      next: { revalidate: 60 },
-      signal: controller.signal,
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-    
-    clearTimeout(timeoutId);
     
     if (!response.ok) {
       console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
@@ -99,11 +68,7 @@ export async function GET() {
     return NextResponse.json(tagCounts);
   } catch (error: any) {
     // Handle network errors gracefully
-    if (error.name === 'AbortError') {
-      console.error('Request timeout while fetching tags');
-    } else {
-      console.error('Error fetching tags:', error.message || error);
-    }
+    console.error('Error fetching tags:', error?.message || error);
     // Return empty tags instead of 500 error
     return NextResponse.json({});
   }
