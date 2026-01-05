@@ -4,43 +4,21 @@ import { NextRequest, NextResponse } from 'next/server';
 export const runtime = 'edge';
 
 export async function GET() {
-  try {
-    return NextResponse.json({ 
-      message: 'Simple GET endpoint is working',
-      timestamp: new Date().toISOString(),
-      runtime: 'nodejs' // Default runtime
-    });
-  } catch (error: any) {
-    return NextResponse.json({ 
-      message: 'Error in simple GET endpoint',
-      error: error.message 
-    }, { status: 500 });
-  }
+  // Ultra-simple response - no try-catch, no Date operations
+  return NextResponse.json({ 
+    status: 'ok',
+    message: 'GET endpoint is working',
+    timestamp: Date.now()
+  });
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    // Try to parse body
-    let body: any = {};
-    
-    try {
-      body = await request.json();
-    } catch (e) {
-      body = { error: 'Failed to parse JSON' };
-    }
-    
-    return NextResponse.json({ 
-      message: 'Simple POST endpoint is working',
-      receivedBody: body,
-      timestamp: new Date().toISOString(),
-      runtime: 'nodejs' // Default runtime
-    });
-  } catch (error: any) {
-    return NextResponse.json({ 
-      message: 'Error in simple POST endpoint',
-      error: error.message,
-      errorType: error.name
-    }, { status: 500 });
-  }
+  // Ultra-simple - don't parse body, just return success
+  return NextResponse.json({ 
+    status: 'ok',
+    message: 'POST endpoint is working',
+    timestamp: Date.now(),
+    note: 'Body parsing skipped for testing'
+  });
 }
 
