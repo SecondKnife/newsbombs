@@ -48,15 +48,15 @@ function getApiBaseUrl(): string {
       return apiUrl.trim();
     }
     
-    // Fallback: Hardcode for testing (remove after fixing)
-    console.warn('[getApiBaseUrl] No API URL found in env, using fallback');
-    const fallbackUrl = 'http://157.66.100.32:3001';
+    // Fallback: use HTTPS tunnel endpoint
+    console.warn('[getApiBaseUrl] No API URL found in env, using HTTPS tunnel fallback');
+    const fallbackUrl = 'https://api.nhatbinhkt.com';
     console.log('[getApiBaseUrl] Using fallback URL:', fallbackUrl);
     return fallbackUrl;
   } catch (error) {
     console.error('[getApiBaseUrl] Error reading API URL from environment:', error);
-    // Fallback for testing
-    return 'http://157.66.100.32:3001';
+    // Fallback to HTTPS tunnel endpoint
+    return 'https://api.nhatbinhkt.com';
   }
 }
 

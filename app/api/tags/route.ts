@@ -24,8 +24,8 @@ function getApiBaseUrl(): string {
     console.warn('Error reading API URL:', error);
   }
   
-  // On Cloudflare Pages without API URL, return empty string
-  return '';
+  // Fallback to HTTPS tunnel endpoint
+  return 'https://api.nhatbinhkt.com';
 }
 
 export async function GET() {

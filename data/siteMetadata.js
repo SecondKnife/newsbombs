@@ -4,7 +4,7 @@ const siteMetadata = {
   name: 'Khong Nhat Binh',
   headerTitle: 'NewsBombs',
   description: 'Chào mừng kỷ niệm 80 năm Ngày thành lập Binh chủng Công binh Việt Nam (25/03/1946 - 25/03/2026). Tổng hợp tin tức, lịch sử và câu chuyện về Binh chủng Công binh.',
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://nhatbinhkt.com',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://api.nhatbinhkt.com',
   language: 'vi-VN',
   company: 'Bomicen',
   theme: 'system', // system, dark or light

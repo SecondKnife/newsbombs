@@ -9,15 +9,9 @@ export function getApiUrl(): string {
     return url;
   }
   
-  // Fallback: use backend URL directly
-  if (typeof window !== 'undefined') {
-    // Client-side: return empty string to use relative /api (if proxied) or backend URL
-    // For now, use backend URL directly
-    return 'http://157.66.100.32:3001';
-  }
-  
-  // Server-side fallback
-  return 'http://157.66.100.32:3001';
+  // Fallback: use HTTPS tunnel endpoint
+  // This ensures we always use HTTPS even if env var is not set
+  return 'https://api.nhatbinhkt.com';
 }
 
 // Build API endpoint URL
