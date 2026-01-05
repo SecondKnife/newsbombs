@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Edge runtime required for Cloudflare Pages
+// Try Node.js runtime first - Edge Runtime may not support HTTP fetch
+// If this doesn't work on Cloudflare Pages, we'll need to use Edge Runtime
+// but with better error handling
 export const runtime = 'edge';
 
 // Get API base URL
@@ -73,9 +75,43 @@ export async function POST(request: NextRequest) {
         }),
       });
     } catch (fetchError: any) {
-      console.error('Fetch error:', fetchError);
+      console.error('Fetch error details:', {
+        message: fetchError.message,
+        name: fetchError.name,
+        stack: fetchError.stack,
+        cause: fetchError.cause,
+      });
+      
+      // Check if it's a URL-related error
+      if (fetchError.message?.includes('URL') || fetchError.message?.includes('Invalid')) {
+        return NextResponse.json(
+          { 
+            message: `Invalid backend URL: ${backendUrl}. Please check NEXT_PUBLIC_API_URL environment variable.`,
+            error: 'InvalidURL',
+            backendUrl: backendUrl
+          },
+          { status: 500 }
+        );
+      }
+      
+      // Check if it's a network error
+      if (fetchError.message?.includes('fetch') || fetchError.message?.includes('network')) {
+        return NextResponse.json(
+          { 
+            message: `Cannot connect to backend at ${backendUrl}. Please ensure backend is running and accessible.`,
+            error: 'NetworkError',
+            backendUrl: backendUrl
+          },
+          { status: 503 }
+        );
+      }
+      
       return NextResponse.json(
-        { message: `Failed to connect to backend: ${fetchError.message || 'Network error'}` },
+        { 
+          message: `Failed to connect to backend: ${fetchError.message || 'Unknown network error'}`,
+          error: fetchError.name || 'FetchError',
+          backendUrl: backendUrl
+        },
         { status: 503 }
       );
     }
@@ -115,8 +151,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('Login proxy error:', error);
+    
+    // Return detailed error message for debugging
+    const errorMessage = error.message || 'An error occurred during login';
+    const errorStack = error.stack || '';
+    
+    // Log full error details
+    console.error('Full error details:', {
+      message: errorMessage,
+      stack: errorStack,
+      name: error.name,
+      cause: error.cause,
+    });
+    
     return NextResponse.json(
-      { message: error.message || 'An error occurred during login' },
+      { 
+        message: errorMessage,
+        error: error.name || 'UnknownError',
+        // Only include stack in development
+        ...(process.env.NODE_ENV === 'development' && { stack: errorStack })
+      },
       { status: 500 }
     );
   }

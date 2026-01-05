@@ -31,14 +31,24 @@ export default function AdminLogin() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        let errorData;
+        let errorText = '';
+        let errorData: any = {};
         try {
-          errorData = JSON.parse(errorText);
-        } catch {
+          errorText = await response.text();
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            // If not JSON, use text as message
+            errorData = { message: errorText || `Login failed: ${response.status} ${response.statusText}` };
+          }
+        } catch (textError) {
           errorData = { message: `Login failed: ${response.status} ${response.statusText}` };
         }
-        throw new Error(errorData.message || "Login failed");
+        
+        // Show detailed error message
+        const errorMessage = errorData.message || errorData.error || "Login failed";
+        console.error('Login error:', errorData);
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
