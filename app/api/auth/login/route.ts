@@ -107,35 +107,44 @@ export async function POST(request: NextRequest) {
       
       // Check if it's a URL-related error
       if (fetchError.message?.includes('URL') || fetchError.message?.includes('Invalid')) {
-        return NextResponse.json(
-          { 
+        return new NextResponse(
+          JSON.stringify({ 
             message: `Invalid backend URL: ${backendUrl}. Please check NEXT_PUBLIC_API_URL environment variable.`,
             error: 'InvalidURL',
             backendUrl: backendUrl
-          },
-          { status: 500 }
+          }),
+          { 
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+          }
         );
       }
       
       // Check if it's a network error
       if (fetchError.message?.includes('fetch') || fetchError.message?.includes('network')) {
-        return NextResponse.json(
-          { 
+        return new NextResponse(
+          JSON.stringify({ 
             message: `Cannot connect to backend at ${backendUrl}. Please ensure backend is running and accessible.`,
             error: 'NetworkError',
             backendUrl: backendUrl
-          },
-          { status: 503 }
+          }),
+          { 
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          }
         );
       }
       
-      return NextResponse.json(
-        { 
+      return new NextResponse(
+        JSON.stringify({ 
           message: `Failed to connect to backend: ${fetchError.message || 'Unknown network error'}`,
           error: fetchError.name || 'FetchError',
           backendUrl: backendUrl
-        },
-        { status: 503 }
+        }),
+        { 
+          status: 503,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
@@ -154,9 +163,12 @@ export async function POST(request: NextRequest) {
       }
       
       console.error('Backend error:', response.status, errorData);
-      return NextResponse.json(
-        errorData,
-        { status: response.status }
+      return new NextResponse(
+        JSON.stringify(errorData),
+        { 
+          status: response.status,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
@@ -165,13 +177,22 @@ export async function POST(request: NextRequest) {
       data = await response.json();
     } catch (jsonError: any) {
       console.error('Error parsing response JSON:', jsonError);
-      return NextResponse.json(
-        { message: 'Invalid response from backend' },
-        { status: 500 }
+      return new NextResponse(
+        JSON.stringify({ message: 'Invalid response from backend', error: 'ParseError' }),
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
     
-    return NextResponse.json(data);
+    return new NextResponse(
+      JSON.stringify(data),
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   } catch (error: any) {
     // Ensure we always return JSON, even for unexpected errors
     console.error('Login proxy error:', error);
