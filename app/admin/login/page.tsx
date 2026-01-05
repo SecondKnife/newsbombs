@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { buildApiUrl } from "@/lib/api/admin";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -21,8 +20,9 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const loginUrl = buildApiUrl('api/auth/login');
-      const response = await fetch(loginUrl, {
+      // Use Next.js API route proxy to avoid mixed content issues
+      // This route runs on server-side and can call HTTP backend
+      const response = await fetch('/api/auth/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
