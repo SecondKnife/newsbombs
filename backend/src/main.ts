@@ -14,13 +14,13 @@ async function bootstrap() {
   
   // Enable CORS for frontend
   // Allow multiple origins for production and development
-  const allowedOrigins = [
+  const allowedOrigins: string[] = [
     process.env.FRONTEND_URL,
     'https://nhatbinhkt.com',
     'https://www.nhatbinhkt.com',
     'https://newsbombs.pages.dev',
     'http://localhost:3455', // Development
-  ].filter(Boolean); // Remove undefined values
+  ].filter((origin): origin is string => Boolean(origin)); // Remove undefined values and ensure type safety
 
   app.enableCors({
     origin: (origin, callback) => {
