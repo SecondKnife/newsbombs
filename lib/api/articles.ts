@@ -1,19 +1,31 @@
 // Get API base URL with better fallback handling
 // In edge runtime, environment variables are available directly
 function getApiBaseUrl(): string {
-  // Try to get from environment variable (works in both Node.js and Edge runtime)
-  // In Cloudflare Pages, NEXT_PUBLIC_* variables are available at runtime
-  const apiUrl = typeof process !== 'undefined' 
-    ? process.env.NEXT_PUBLIC_API_URL 
-    : (globalThis as any).NEXT_PUBLIC_API_URL;
-  
-  if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
-    return apiUrl.trim();
+  try {
+    // Try to get from environment variable (works in both Node.js and Edge runtime)
+    // In Cloudflare Pages, NEXT_PUBLIC_* variables are available at runtime
+    let apiUrl: string | undefined;
+    
+    if (typeof process !== 'undefined' && process.env) {
+      apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    }
+    
+    if (!apiUrl && typeof globalThis !== 'undefined') {
+      apiUrl = (globalThis as any).NEXT_PUBLIC_API_URL;
+    }
+    
+    if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
+      const cleaned = apiUrl.trim().replace(/\/+$/, '').replace(/\/api$/, '');
+      console.log('[getApiBaseUrl] Found API URL:', cleaned);
+      return cleaned;
+    }
+  } catch (error) {
+    console.warn('[getApiBaseUrl] Error reading API URL:', error);
   }
   
-  // On Cloudflare Pages without API URL, return empty string
-  // This will cause getAllArticles to return empty array gracefully
-  return '';
+  // Fallback to HTTPS tunnel endpoint
+  console.log('[getApiBaseUrl] Using fallback: https://api.nhatbinhkt.com');
+  return 'https://api.nhatbinhkt.com';
 }
 
 // Get API base URL at runtime (not at module load time)
@@ -78,35 +90,50 @@ export async function getAllArticles(): Promise<Article[]> {
     
     // If no API URL is configured, return empty array gracefully
     if (!apiBaseUrl || apiBaseUrl.trim() === '') {
-      console.warn('No API_BASE_URL configured, returning empty articles array');
+      console.warn('[getAllArticles] No API_BASE_URL configured, returning empty articles array');
+      console.warn('[getAllArticles] Check NEXT_PUBLIC_API_URL environment variable in Cloudflare Pages');
       return [];
     }
     
     // Ensure URL is valid before making request
     const url = `${apiBaseUrl}/api/articles`;
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      console.warn('Invalid API URL, returning empty articles array');
+      console.warn('[getAllArticles] Invalid API URL:', url);
       return [];
     }
     
+    console.log('[getAllArticles] Fetching articles from:', url);
+    
+    // Simple fetch for Edge Runtime (no next.revalidate)
     const response = await fetchWithTimeout(url, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }, 5000);
     
     if (!response.ok) {
-      console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
+      console.error(`[getAllArticles] Failed to fetch articles: ${response.status} ${response.statusText}`);
+      const errorText = await response.text().catch(() => '');
+      console.error(`[getAllArticles] Error response:`, errorText);
       return [];
     }
     
     const data = await response.json();
+    console.log(`[getAllArticles] Successfully fetched ${Array.isArray(data) ? data.length : 0} articles`);
     // Ensure we return an array
     return Array.isArray(data) ? data : [];
   } catch (error: any) {
     // Handle network errors gracefully
     if (error.name === 'AbortError') {
-      console.error('Request timeout while fetching articles');
+      console.error('[getAllArticles] Request timeout while fetching articles');
     } else {
-      console.error('Error fetching articles:', error.message || error);
+      console.error('[getAllArticles] Error fetching articles:', error.message || error);
+      console.error('[getAllArticles] Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
     }
     return [];
   }
@@ -129,8 +156,12 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       return null;
     }
     
+    // Simple fetch for Edge Runtime (no next.revalidate)
     const response = await fetchWithTimeout(url, {
-      next: { revalidate: 60 },
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }, 5000);
     
     if (!response.ok) {
@@ -170,8 +201,12 @@ export async function getArticleById(id: string): Promise<Article | null> {
       return null;
     }
     
+    // Simple fetch for Edge Runtime (no next.revalidate)
     const response = await fetchWithTimeout(url, {
-      next: { revalidate: 60 },
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }, 5000);
     
     if (!response.ok) {
