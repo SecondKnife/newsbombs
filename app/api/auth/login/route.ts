@@ -22,10 +22,20 @@ function getApiBaseUrl(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Parse request body
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError: any) {
+      console.error('Error parsing request body:', parseError);
+      return NextResponse.json(
+        { message: 'Invalid request body' },
+        { status: 400 }
+      );
+    }
     
     // Validate request body
-    if (!body.email || !body.password) {
+    if (!body || !body.email || !body.password) {
       return NextResponse.json(
         { message: 'Email and password are required' },
         { status: 400 }
@@ -33,35 +43,63 @@ export async function POST(request: NextRequest) {
     }
 
     const API_BASE_URL = getApiBaseUrl();
+    const backendUrl = `${API_BASE_URL}/api/auth/login`;
+    
+    console.log('Forwarding login request to:', backendUrl);
     
     // Forward request to backend API
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: body.email,
-        password: body.password,
-      }),
-    });
+    let response;
+    try {
+      response = await fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: body.email,
+          password: body.password,
+        }),
+      });
+    } catch (fetchError: any) {
+      console.error('Fetch error:', fetchError);
+      return NextResponse.json(
+        { message: `Failed to connect to backend: ${fetchError.message || 'Network error'}` },
+        { status: 503 }
+      );
+    }
 
     if (!response.ok) {
-      const errorText = await response.text();
+      let errorText = '';
       let errorData;
       try {
-        errorData = JSON.parse(errorText);
-      } catch {
+        errorText = await response.text();
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: `Login failed: ${response.status} ${response.statusText}` };
+        }
+      } catch (textError) {
         errorData = { message: `Login failed: ${response.status} ${response.statusText}` };
       }
       
+      console.error('Backend error:', response.status, errorData);
       return NextResponse.json(
         errorData,
         { status: response.status }
       );
     }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError: any) {
+      console.error('Error parsing response JSON:', jsonError);
+      return NextResponse.json(
+        { message: 'Invalid response from backend' },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('Login proxy error:', error);
