@@ -29,7 +29,26 @@ echo "✅ cloudflared installed"
 # Step 2: Login
 echo "🔐 Please login to Cloudflare..."
 echo "This will open a browser window. Please authorize the tunnel."
-cloudflared tunnel login
+echo "If you see an error about certificate, you can download it manually:"
+echo "1. Open the URL shown in browser"
+echo "2. Login and download cert.pem"
+echo "3. Upload to /root/.cloudflared/cert.pem"
+echo ""
+read -p "Press Enter after you have completed login (or if certificate is already in place)..."
+
+# Check if certificate exists
+if [ ! -f /root/.cloudflared/cert.pem ]; then
+    echo "⚠️  Certificate not found. Please download and place it at /root/.cloudflared/cert.pem"
+    echo "You can also try: cloudflared tunnel login"
+    read -p "Press Enter when certificate is ready..."
+fi
+
+if [ -f /root/.cloudflared/cert.pem ]; then
+    echo "✅ Certificate found"
+else
+    echo "❌ Certificate still not found. Please setup manually."
+    exit 1
+fi
 
 # Step 3: Create tunnel
 echo "🔨 Creating tunnel..."
