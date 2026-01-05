@@ -6,8 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? '/api' : 'http://localhost:3001');
+import { buildApiUrl } from "@/lib/api/admin";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -22,7 +21,8 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const loginUrl = buildApiUrl('api/auth/login');
+      const response = await fetch(loginUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,11 +30,18 @@ export default function AdminLogin() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: `Login failed: ${response.status} ${response.statusText}` };
+        }
+        throw new Error(errorData.message || "Login failed");
       }
+
+      const data = await response.json();
 
       // Store token and user info
       localStorage.setItem("admin_token", data.access_token);

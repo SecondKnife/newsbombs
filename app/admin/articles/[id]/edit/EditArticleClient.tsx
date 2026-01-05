@@ -27,7 +27,7 @@ const RichTextEditor = dynamic(
   }
 );
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+import { buildApiUrl } from "@/lib/api/admin";
 
 interface UploadedImage {
   filename: string;
@@ -65,7 +65,7 @@ export default function EditArticleClient() {
 
   const fetchArticle = async (token: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/articles/${articleId}`, {
+      const response = await fetch(buildApiUrl(`api/articles/${articleId}`), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -126,7 +126,7 @@ export default function EditArticleClient() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch(`${API_URL}/api/articles/upload`, {
+        const response = await fetch(buildApiUrl('api/articles/upload'), {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -196,7 +196,7 @@ export default function EditArticleClient() {
     ];
 
     try {
-      const response = await fetch(`${API_URL}/api/articles/${articleId}`, {
+      const response = await fetch(buildApiUrl(`api/articles/${articleId}`), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

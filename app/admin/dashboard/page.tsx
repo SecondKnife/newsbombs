@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, LogOut, Edit, Trash2 } from "lucide-react";
+import { buildApiUrl } from "@/lib/api/admin";
 
 interface Article {
   id: string;
@@ -37,7 +38,7 @@ export default function AdminDashboard() {
 
   const fetchArticles = async (token: string) => {
     try {
-      const response = await fetch("http://localhost:3001/api/articles", {
+      const response = await fetch(buildApiUrl('api/articles'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +66,7 @@ export default function AdminDashboard() {
 
     const token = localStorage.getItem("admin_token");
     try {
-      const response = await fetch(`http://localhost:3001/api/articles/${id}`, {
+      const response = await fetch(buildApiUrl(`api/articles/${id}`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
