@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import dynamic from "next/dynamic";
 import { fadeInUp } from "@/lib/motion/variants";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { getValidImagePath } from "@/lib/utils/imageUtils";
 
 const MotionBlock = dynamic(() => import("./motions/Block"));
 
@@ -27,11 +28,11 @@ export default function NewsHero({ featuredPost }: NewsHeroProps) {
           {/* Responsive height: smaller on mobile */}
           <div className="relative h-[280px] sm:h-[350px] md:h-[450px] lg:h-[500px] group cursor-pointer">
             <Image
-              src={
-                (featuredPost.images && Array.isArray(featuredPost.images) && featuredPost.images[0] && typeof featuredPost.images[0] === 'string')
-                  ? featuredPost.images[0]
-                  : "/placeholder.jpg"
-              }
+              src={getValidImagePath(
+                featuredPost.images && Array.isArray(featuredPost.images) && featuredPost.images[0] 
+                  ? featuredPost.images[0] 
+                  : null
+              )}
               alt={featuredPost.title || 'Featured post'}
               fill
               sizes="100vw"

@@ -9,7 +9,8 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 import ThemeWrapper from "@/components/ThemeWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import bgStylesConfigs from "@/lib/client/bgStylesConfigs";
-import { Analytics } from "@vercel/analytics/react"
+// Vercel Analytics removed - not needed on Cloudflare Pages
+// import { Analytics } from "@vercel/analytics/react"
 import dynamic from "next/dynamic";
 
 const MotionContainer = dynamic(() => import("@/components/motions/Container"));
@@ -117,7 +118,7 @@ export default async function RootLayout({
       />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <body className="">
-        <Analytics/>
+        {/* Vercel Analytics removed - not needed on Cloudflare Pages */}
         <LanguageProvider>
           <ThemeWrapper bgFlagNumber={bgFlagNumber}>
             <AnimatedBackground className="bg-slate-100 pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white"/>

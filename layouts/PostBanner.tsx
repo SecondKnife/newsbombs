@@ -6,6 +6,7 @@ import PageTitle from '@components/PageTitle'
 import SectionContainer from '@components/SectionContainer'
 import siteMetadata from '@data/siteMetadata'
 import ScrollTopAndComment from '@components/ScrollTopAndComment'
+import { getValidImagePath } from '@/lib/utils/imageUtils'
 
 interface LayoutProps {
   content: any
@@ -16,10 +17,11 @@ interface LayoutProps {
 
 export default function PostMinimal({ content, next, prev, children }: LayoutProps) {
   const { slug, title, images } = content
-  const displayImage =
-    (images && Array.isArray(images) && images.length > 0 && typeof images[0] === 'string') 
-      ? images[0] 
-      : 'https://picsum.photos/seed/picsum/800/400'
+  const displayImage = getValidImagePath(
+    images && Array.isArray(images) && images.length > 0 && typeof images[0] === 'string'
+      ? images[0]
+      : null
+  )
 
   return (
     <SectionContainer>

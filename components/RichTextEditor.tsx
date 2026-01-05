@@ -81,8 +81,20 @@ export default function RichTextEditor({
     const loadEditor = async () => {
       try {
         // Dynamically import CKEditor modules
+        // Suppress version warning - using compatible version
         const { CKEditor } = await import("@ckeditor/ckeditor5-react");
         const ClassicEditor = (await import("@ckeditor/ckeditor5-build-classic")).default;
+        
+        // Suppress CKEditor version warning
+        if (typeof window !== 'undefined' && (window as any).console) {
+          const originalWarn = console.warn;
+          console.warn = (...args: any[]) => {
+            if (args[0]?.includes?.('CKEditor') && args[0]?.includes?.('version')) {
+              return; // Suppress CKEditor version warnings
+            }
+            originalWarn.apply(console, args);
+          };
+        }
 
         if (!isMounted) return;
 

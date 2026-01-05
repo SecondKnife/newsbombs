@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import Image from "@/components/Image";
 import { arise, cards, fadeInLeft, fadeInRight } from "@/lib/motion/variants";
 import dynamic from "next/dynamic";
+import { getValidImagePath } from "@/lib/utils/imageUtils";
 const MotionBlock = dynamic(() => import("@/components/motions/Block"));
 const MotionListItem = dynamic(() => import("@/components/motions/ListItem"));
 const Tag = dynamic(() => import("@components/Tag"));
@@ -161,7 +162,7 @@ export default function ListLayoutWithTags({
                       {/* Image - fixed width */}
                       <Link href={`/${postPath}`} className="flex-shrink-0 w-24 sm:w-32 md:w-40">
                         <Image
-                          src={(images && images[0]) || "/placeholder.jpg"}
+                          src={getValidImagePath(images && images[0] ? images[0] : null)}
                           alt={images && images[0] ? title : 'Placeholder'}
                           height={200}
                           width={300}

@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import dynamic from "next/dynamic";
 import { fadeInUp } from "@/lib/motion/variants";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { getValidImagePath } from "@/lib/utils/imageUtils";
 
 const MotionBlock = dynamic(() => import("./motions/Block"));
 
@@ -39,11 +40,11 @@ export default function NewsGrid({ posts, title }: NewsGridProps) {
             <Link href={`/blog/${featuredPost.slug || featuredPost.name || featuredPost.title}`} className="flex flex-col h-full">
               <div className="relative h-44 sm:h-52 md:h-60 lg:h-72 overflow-hidden">
                 <Image
-                  src={
-                    (featuredPost.images && Array.isArray(featuredPost.images) && featuredPost.images[0] && typeof featuredPost.images[0] === 'string')
+                  src={getValidImagePath(
+                    featuredPost.images && Array.isArray(featuredPost.images) && featuredPost.images[0]
                       ? featuredPost.images[0]
-                      : "/placeholder.jpg"
-                  }
+                      : null
+                  )}
                   alt={featuredPost.title || 'News article'}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -92,11 +93,11 @@ export default function NewsGrid({ posts, title }: NewsGridProps) {
                 {/* Image */}
                 <div className="relative w-24 sm:w-32 md:w-36 lg:w-40 h-24 sm:h-28 md:h-32 flex-shrink-0 overflow-hidden">
                   <Image
-                    src={
-                      (post.images && Array.isArray(post.images) && post.images[0] && typeof post.images[0] === 'string')
+                    src={getValidImagePath(
+                      post.images && Array.isArray(post.images) && post.images[0]
                         ? post.images[0]
-                        : "/placeholder.jpg"
-                    }
+                        : null
+                    )}
                     alt={post.title || 'News article'}
                     fill
                     sizes="160px"

@@ -8,6 +8,7 @@ import { useHomeContext } from "@/contexts/home";
 import { fadeInRight, heading } from "@/lib/motion/variants";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { getValidImagePath } from "@/lib/utils/imageUtils";
 
 const MotionBlock = dynamic(() => import("./motions/Block"));
 const MotionSpan = dynamic(() => import("./motions/Span"));
@@ -38,7 +39,7 @@ export default function LatestBlogs() {
                   <div className="relative flex-shrink-0">
                     <div className='absolute inset-0 blur-sm bg-card/80 opacity-10 z-10' />
                     <Image
-                      src={(post.images && post.images[0]) || "/placeholder.svg"}
+                      src={getValidImagePath(post.images && post.images[0] ? post.images[0] : null)}
                       alt={post.images && post.images[0] ? post.title : 'Placeholder'}
                       className="object-cover rounded-t-md"
                       width={600}
