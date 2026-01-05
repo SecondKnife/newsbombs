@@ -4,13 +4,25 @@ import { NextRequest, NextResponse } from 'next/server';
 export const runtime = 'edge';
 
 // Get API base URL
+// In Edge Runtime, environment variables are available via process.env at build time
+// But at runtime, they might need to be accessed differently
 function getApiBaseUrl(): string {
   try {
+    // Try multiple methods to get environment variable
+    let apiUrl: string | undefined;
+    
+    // Method 1: process.env (works in Edge Runtime)
     if (typeof process !== 'undefined' && process.env) {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
-        return apiUrl.trim().replace(/\/+$/, '').replace(/\/api$/, '');
-      }
+      apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    }
+    
+    // Method 2: globalThis (fallback for some edge runtimes)
+    if (!apiUrl && typeof globalThis !== 'undefined') {
+      apiUrl = (globalThis as any).NEXT_PUBLIC_API_URL;
+    }
+    
+    if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
+      return apiUrl.trim().replace(/\/+$/, '').replace(/\/api$/, '');
     }
   } catch (error) {
     console.warn('Error reading API URL:', error);
