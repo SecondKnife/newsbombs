@@ -42,6 +42,7 @@ function getApiBaseUrl(): string {
 export async function POST(request: NextRequest) {
   // Wrap everything in try-catch to ensure we always return JSON
   try {
+    console.log('[LOGIN API] Request received');
     // Parse request body
     let body;
     try {
@@ -87,7 +88,8 @@ export async function POST(request: NextRequest) {
     }
     
     const backendUrl = `${API_BASE_URL}/api/auth/login`;
-    console.log('Forwarding login request to:', backendUrl);
+    console.log('[LOGIN API] API_BASE_URL:', API_BASE_URL);
+    console.log('[LOGIN API] Forwarding login request to:', backendUrl);
     
     // Forward request to backend API
     let response;
