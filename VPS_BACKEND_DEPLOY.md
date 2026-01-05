@@ -49,7 +49,7 @@ sudo systemctl enable postgresql
 # Tạo database và user
 sudo -u postgres psql << EOF
 CREATE DATABASE newsbombs;
-CREATE USER newsbombs_user WITH PASSWORD 'your_secure_password_here';
+CREATE USER newsbombs_user WITH PASSWORD 'Tuanvip19';
 GRANT ALL PRIVILEGES ON DATABASE newsbombs TO newsbombs_user;
 \q
 EOF

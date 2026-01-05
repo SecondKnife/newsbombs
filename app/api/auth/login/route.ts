@@ -65,30 +65,32 @@ export async function POST(request: NextRequest) {
     }
     
     // Parse request body
-    // In Edge Runtime, we need to handle body parsing carefully
+    // In Edge Runtime, use request.json() directly
     let body;
     try {
-      // Try to read as text first, then parse JSON
-      const bodyText = await request.text();
-      console.log('[LOGIN API] Request body text:', bodyText);
-      
-      if (!bodyText || bodyText.trim() === '') {
-        throw new Error('Empty request body');
+      // Check if request has body
+      if (!request.body) {
+        throw new Error('Request has no body');
       }
       
-      try {
-        body = JSON.parse(bodyText);
-      } catch (jsonError: any) {
-        console.error('[LOGIN API] JSON parse error:', jsonError);
-        throw new Error('Invalid JSON in request body');
-      }
+      // Try to parse JSON directly (works in Edge Runtime)
+      body = await request.json();
+      console.log('[LOGIN API] Parsed body:', JSON.stringify(body));
     } catch (parseError: any) {
       console.error('[LOGIN API] Error parsing request body:', parseError);
+      console.error('[LOGIN API] Error details:', {
+        message: parseError.message,
+        name: parseError.name,
+        stack: parseError.stack
+      });
+      
+      // Return detailed error for debugging
       return new NextResponse(
         JSON.stringify({ 
           message: 'Invalid request body', 
           error: 'ParseError',
-          details: parseError.message 
+          details: parseError.message,
+          errorType: parseError.name
         }),
         { 
           status: 400,

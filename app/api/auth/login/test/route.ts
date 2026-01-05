@@ -31,20 +31,45 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Test POST request parsing
-    const bodyText = await request.text();
-    let body;
+    console.log('[TEST POST] Request received');
+    console.log('[TEST POST] Request method:', request.method);
+    console.log('[TEST POST] Request headers:', Object.fromEntries(request.headers.entries()));
+    
+    // Test POST request parsing - try multiple methods
+    let body: any = {};
+    let parseMethod = 'none';
     
     try {
-      body = bodyText ? JSON.parse(bodyText) : {};
-    } catch {
-      body = { raw: bodyText };
+      // Method 1: Try request.json() directly (recommended for Edge Runtime)
+      if (request.body) {
+        body = await request.json();
+        parseMethod = 'json()';
+        console.log('[TEST POST] Successfully parsed with request.json()');
+      } else {
+        throw new Error('Request has no body');
+      }
+    } catch (jsonError: any) {
+      console.error('[TEST POST] request.json() failed:', jsonError.message);
+      
+      try {
+        // Method 2: Try request.text() then parse
+        const bodyText = await request.text();
+        parseMethod = 'text()';
+        if (bodyText) {
+          body = JSON.parse(bodyText);
+          console.log('[TEST POST] Successfully parsed with request.text()');
+        }
+      } catch (textError: any) {
+        console.error('[TEST POST] request.text() failed:', textError.message);
+        body = { error: 'Failed to parse body', jsonError: jsonError.message, textError: textError.message };
+      }
     }
     
     return new NextResponse(
       JSON.stringify({ 
         message: 'POST endpoint is working',
         receivedBody: body,
+        parseMethod: parseMethod,
         timestamp: new Date().toISOString()
       }),
       { 
@@ -53,10 +78,13 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error: any) {
+    console.error('[TEST POST] Unexpected error:', error);
     return new NextResponse(
       JSON.stringify({ 
         message: 'Error in POST test endpoint',
-        error: error.message 
+        error: error.message,
+        errorType: error.name,
+        stack: error.stack
       }),
       { 
         status: 500,

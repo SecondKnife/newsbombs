@@ -1,63 +1,19 @@
 // Get API base URL with better fallback handling
 // In edge runtime, environment variables are available directly
 function getApiBaseUrl(): string {
-  try {
-    // Try multiple ways to get environment variable (works in both Node.js and Edge runtime)
-    // In Cloudflare Pages, NEXT_PUBLIC_* variables are available at runtime
-    let apiUrl: string | undefined;
-    
-    // Method 1: Try process.env (Node.js and some edge runtimes)
-    if (typeof process !== 'undefined' && process.env) {
-      apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      console.log('[getApiBaseUrl] Method 1 (process.env):', apiUrl || 'not found');
-    }
-    
-    // Method 2: Try globalThis (edge runtime fallback)
-    if (!apiUrl && typeof globalThis !== 'undefined') {
-      apiUrl = (globalThis as any).NEXT_PUBLIC_API_URL;
-      console.log('[getApiBaseUrl] Method 2 (globalThis):', apiUrl || 'not found');
-    }
-    
-    // Method 3: Try direct access (Cloudflare Pages)
-    if (!apiUrl && typeof process !== 'undefined') {
-      try {
-        apiUrl = (process as any).env?.NEXT_PUBLIC_API_URL;
-        console.log('[getApiBaseUrl] Method 3 (process.env?):', apiUrl || 'not found');
-      } catch (e) {
-        console.log('[getApiBaseUrl] Method 3 error:', e);
-      }
-    }
-    
-    // Method 4: Try accessing via Request context (Cloudflare Pages edge runtime)
-    // In Cloudflare Pages, env vars might be in the request context
-    if (!apiUrl) {
-      try {
-        // This is a fallback - Cloudflare Pages might inject env vars differently
-        const env = (globalThis as any).env || (globalThis as any).ENV;
-        if (env && env.NEXT_PUBLIC_API_URL) {
-          apiUrl = env.NEXT_PUBLIC_API_URL;
-          console.log('[getApiBaseUrl] Method 4 (globalThis.env):', apiUrl);
-        }
-      } catch (e) {
-        // Ignore
-      }
-    }
-    
-    if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
-      console.log('[getApiBaseUrl] Found API URL:', apiUrl.trim());
-      return apiUrl.trim();
-    }
-    
-    // Fallback: use HTTPS tunnel endpoint
-    console.warn('[getApiBaseUrl] No API URL found in env, using HTTPS tunnel fallback');
-    const fallbackUrl = 'https://api.nhatbinhkt.com';
-    console.log('[getApiBaseUrl] Using fallback URL:', fallbackUrl);
-    return fallbackUrl;
-  } catch (error) {
-    console.error('[getApiBaseUrl] Error reading API URL from environment:', error);
-    // Fallback to HTTPS tunnel endpoint
-    return 'https://api.nhatbinhkt.com';
+  // Try to get from environment variable (works in both Node.js and Edge runtime)
+  // In Cloudflare Pages, NEXT_PUBLIC_* variables are available at runtime
+  const apiUrl = typeof process !== 'undefined' 
+    ? process.env.NEXT_PUBLIC_API_URL 
+    : (globalThis as any).NEXT_PUBLIC_API_URL;
+  
+  if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
+    return apiUrl.trim();
   }
+  
+  // On Cloudflare Pages without API URL, return empty string
+  // This will cause getAllArticles to return empty array gracefully
+  return '';
 }
 
 // Get API base URL at runtime (not at module load time)
@@ -67,8 +23,7 @@ export function getApiBaseUrlRuntime(): string {
 }
 
 // For backward compatibility, but prefer using getApiBaseUrlRuntime() in edge runtime
-// Note: Don't initialize at module level in edge runtime - use getApiBaseUrlRuntime() instead
-// const API_BASE_URL = getApiBaseUrl(); // Removed - causes issues in edge runtime
+const API_BASE_URL = getApiBaseUrl();
 
 export interface Article {
   id: string;
@@ -87,16 +42,32 @@ export interface Article {
   updatedAt: string;
 }
 
-// Helper function to create fetch
-// Simplified for Cloudflare Pages edge runtime - no timeout needed (Cloudflare has built-in timeout)
-async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 10000): Promise<Response> {
-  // In Cloudflare Pages edge runtime, just use simple fetch
-  // Cloudflare has built-in timeout protection
+// Helper function to create fetch with timeout
+// Note: setTimeout requires nodejs_compat flag in Cloudflare Pages
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 5000): Promise<Response> {
   try {
-    return await fetch(url, options);
-  } catch (error: any) {
-    // Re-throw with more context
-    throw new Error(`Fetch failed: ${error.message || error}`);
+    // Try to use AbortController with timeout if available
+    if (typeof AbortController !== 'undefined' && typeof setTimeout !== 'undefined') {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        return response;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+      }
+    } else {
+      // Fallback: fetch without timeout if setTimeout is not available
+      return await fetch(url, options);
+    }
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -118,34 +89,25 @@ export async function getAllArticles(): Promise<Article[]> {
       return [];
     }
     
-    try {
-      // Note: next: { revalidate } doesn't work in Cloudflare Pages edge runtime
-      // Use standard fetch with cache headers instead
-      const response = await fetchWithTimeout(url, {
-        headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'public, max-age=60, s-maxage=60',
-        },
-      }, 5000);
-      
-      if (!response.ok) {
-        console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
-        return [];
-      }
-      
-      const data = await response.json();
-      // Ensure we return an array
-      return Array.isArray(data) ? data : [];
-    } catch (fetchError: any) {
-      // Handle fetch errors specifically
-      console.error('Fetch error:', fetchError?.message || fetchError);
-      // Return empty array instead of throwing
+    const response = await fetchWithTimeout(url, {
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    }, 5000);
+    
+    if (!response.ok) {
+      console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
       return [];
     }
+    
+    const data = await response.json();
+    // Ensure we return an array
+    return Array.isArray(data) ? data : [];
   } catch (error: any) {
-    // Handle any other errors gracefully
-    console.error('Error in getAllArticles:', error?.message || error);
-    // Always return empty array, never throw
+    // Handle network errors gracefully
+    if (error.name === 'AbortError') {
+      console.error('Request timeout while fetching articles');
+    } else {
+      console.error('Error fetching articles:', error.message || error);
+    }
     return [];
   }
 }
@@ -167,12 +129,8 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       return null;
     }
     
-    // Note: next: { revalidate } doesn't work in Cloudflare Pages edge runtime
     const response = await fetchWithTimeout(url, {
-      headers: {
-        'Accept': 'application/json',
-        'Cache-Control': 'public, max-age=60, s-maxage=60',
-      },
+      next: { revalidate: 60 },
     }, 5000);
     
     if (!response.ok) {
@@ -212,12 +170,8 @@ export async function getArticleById(id: string): Promise<Article | null> {
       return null;
     }
     
-    // Note: next: { revalidate } doesn't work in Cloudflare Pages edge runtime
     const response = await fetchWithTimeout(url, {
-      headers: {
-        'Accept': 'application/json',
-        'Cache-Control': 'public, max-age=60, s-maxage=60',
-      },
+      next: { revalidate: 60 },
     }, 5000);
     
     if (!response.ok) {
