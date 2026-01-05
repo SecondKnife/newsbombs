@@ -32,6 +32,15 @@ export const metadata: Metadata = {
     template: `%s | ${siteMetadata.title}`,
   },
   description: siteMetadata.description,
+  icons: {
+    icon: [
+      { url: '/favicon.png', sizes: 'any' },
+      { url: '/static/favicons/favicon.png', sizes: 'any' },
+    ],
+    apple: [
+      { url: '/static/favicons/apple-touch-icon.png', sizes: '76x76' },
+    ],
+  },
   openGraph: {
     title: siteMetadata.title,
     description: siteMetadata.description,
@@ -79,8 +88,14 @@ export default async function RootLayout({
     >
       <link
         rel="icon"
-        sizes="76x76"
-        href="/static/favicons/favicon.svg"
+        type="image/png"
+        href="/favicon.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="any"
+        href="/static/favicons/favicon.png"
       />
       <link
         rel="apple-touch-icon"
