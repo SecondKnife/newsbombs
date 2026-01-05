@@ -16,22 +16,27 @@ function getApiBaseUrl(): string {
     // Method 1: process.env (works in Edge Runtime)
     if (typeof process !== 'undefined' && process.env) {
       apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      console.log('[getApiBaseUrl] Method 1 (process.env):', apiUrl);
     }
     
     // Method 2: globalThis (fallback for some edge runtimes)
     if (!apiUrl && typeof globalThis !== 'undefined') {
       apiUrl = (globalThis as any).NEXT_PUBLIC_API_URL;
+      console.log('[getApiBaseUrl] Method 2 (globalThis):', apiUrl);
     }
     
     if (apiUrl && typeof apiUrl === 'string' && apiUrl.trim() !== '') {
-      return apiUrl.trim().replace(/\/+$/, '').replace(/\/api$/, '');
+      const cleaned = apiUrl.trim().replace(/\/+$/, '').replace(/\/api$/, '');
+      console.log('[getApiBaseUrl] Found API URL:', cleaned);
+      return cleaned;
     }
   } catch (error) {
-    console.warn('Error reading API URL:', error);
+    console.warn('[getApiBaseUrl] Error reading API URL:', error);
   }
   
-  // Fallback to backend URL
-  return 'http://157.66.100.32:3001';
+  // Fallback to HTTPS tunnel endpoint
+  console.log('[getApiBaseUrl] Using fallback: https://api.nhatbinhkt.com');
+  return 'https://api.nhatbinhkt.com';
 }
 
 export async function POST(request: NextRequest) {
