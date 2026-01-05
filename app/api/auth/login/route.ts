@@ -43,12 +43,33 @@ export async function POST(request: NextRequest) {
   // Wrap everything in try-catch to ensure we always return JSON
   try {
     console.log('[LOGIN API] Request received');
+    
+    // Get API URL first to check if it's available
+    let API_BASE_URL: string;
+    try {
+      API_BASE_URL = getApiBaseUrl();
+      console.log('[LOGIN API] API_BASE_URL:', API_BASE_URL);
+    } catch (urlError: any) {
+      console.error('[LOGIN API] Error getting API URL:', urlError);
+      return new NextResponse(
+        JSON.stringify({ 
+          message: 'Failed to get backend URL', 
+          error: 'ConfigError',
+          details: urlError.message 
+        }),
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+    
     // Parse request body
     let body;
     try {
       body = await request.json();
     } catch (parseError: any) {
-      console.error('Error parsing request body:', parseError);
+      console.error('[LOGIN API] Error parsing request body:', parseError);
       return new NextResponse(
         JSON.stringify({ message: 'Invalid request body', error: 'ParseError' }),
         { 
@@ -68,27 +89,8 @@ export async function POST(request: NextRequest) {
         }
       );
     }
-
-    let API_BASE_URL: string;
-    try {
-      API_BASE_URL = getApiBaseUrl();
-    } catch (urlError: any) {
-      console.error('Error getting API URL:', urlError);
-      return new NextResponse(
-        JSON.stringify({ 
-          message: 'Failed to get backend URL', 
-          error: 'ConfigError',
-          details: urlError.message 
-        }),
-        { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
     
     const backendUrl = `${API_BASE_URL}/api/auth/login`;
-    console.log('[LOGIN API] API_BASE_URL:', API_BASE_URL);
     console.log('[LOGIN API] Forwarding login request to:', backendUrl);
     
     // Forward request to backend API
