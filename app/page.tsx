@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { getAllArticles, type Article } from "@/lib/api/articles";
+import HomeRedirect from "@/components/HomeRedirect";
 
 // Removed edge runtime - not compatible with Cloudflare Pages
 // export const runtime = 'edge';
@@ -91,7 +92,11 @@ export default async function Home() {
       blogPosts = [];
     }
     
-    return <HomePage blogs={blogPosts} />;
+    return (
+      <HomeRedirect>
+        <HomePage blogs={blogPosts} />
+      </HomeRedirect>
+    );
   } catch (error: any) {
     // Ultimate fallback - if anything fails, show error page
     console.error('Critical error in Home page:', error?.message || error);

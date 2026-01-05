@@ -7,13 +7,8 @@ import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
-  // Increase body size limit for large content with images
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-  
-  // Enable CORS for frontend
-  // Allow multiple origins for production and development
   const allowedOrigins: string[] = [
     process.env.FRONTEND_URL,
     'https://nhatbinhkt.com',
@@ -26,9 +21,8 @@ async function bootstrap() {
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      
       // Check if origin is in allowed list
-      if (allowedOrigins.some(allowed => origin.includes(allowed))) {
+      if (allowedOrigins.some((allowed) => origin.includes(allowed))) {
         callback(null, true);
       } else {
         // For development, allow all origins
