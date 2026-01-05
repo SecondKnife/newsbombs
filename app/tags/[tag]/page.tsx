@@ -5,10 +5,10 @@ import { Metadata } from "next";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 
-// Static generation - fetch data at build time
-// Note: Cannot use edge runtime with generateStaticParams in Next.js
-// Cloudflare Pages will handle static routes automatically
-export const dynamic = 'force-static';
+// Cloudflare Pages requires Edge Runtime for all routes
+export const runtime = 'edge';
+
+// Cloudflare Pages will handle static generation automatically
 export const dynamicParams = false; // Return 404 for unknown tags
 
 export async function generateMetadata(
@@ -30,29 +30,8 @@ export async function generateMetadata(
   });
 }
 
-// Generate static params for all tags at build time
-export async function generateStaticParams() {
-  try {
-    const articles = await getAllArticles();
-    if (!Array.isArray(articles)) {
-      return [];
-    }
-    // Get all unique tags
-    const allTags = new Set<string>();
-    articles.forEach((article) => {
-      if (article.tags && Array.isArray(article.tags)) {
-        article.tags.forEach((tag) => allTags.add(tag));
-      }
-    });
-    // Return array of tag objects
-    return Array.from(allTags).map((tag) => ({
-      tag: encodeURIComponent(tag),
-    }));
-  } catch (error: any) {
-    console.error('Error generating static params for tags:', error?.message || error);
-    return [];
-  }
-}
+// Note: generateStaticParams cannot be used with Edge Runtime
+// Cloudflare Pages will handle static generation automatically
 
 export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
   // Get tag from params first, before try-catch

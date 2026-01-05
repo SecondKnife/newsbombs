@@ -2,29 +2,14 @@ import ListLayout from "@layouts/ListLayoutWithTags";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-// Static generation - fetch data at build time
-// Note: Cannot use edge runtime with generateStaticParams in Next.js
-// Cloudflare Pages will handle static routes automatically
-export const dynamic = 'force-static';
+// Cloudflare Pages requires Edge Runtime for all routes
+export const runtime = 'edge';
+
+// Cloudflare Pages will handle static generation automatically
 export const dynamicParams = false; // Return 404 for unknown pages
 
-// Generate static params for pagination at build time
-export async function generateStaticParams() {
-  try {
-    const articles = await getAllArticles();
-    if (!Array.isArray(articles)) {
-      return [{ page: '1' }];
-    }
-    const totalPages = Math.ceil(articles.length / POSTS_PER_PAGE);
-    // Generate params for all pages
-    return Array.from({ length: totalPages }, (_, i) => ({
-      page: String(i + 1),
-    }));
-  } catch (error: any) {
-    console.error('Error generating static params for pagination:', error?.message || error);
-    return [{ page: '1' }];
-  }
-}
+// Note: generateStaticParams cannot be used with Edge Runtime
+// Cloudflare Pages will handle static generation automatically
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
   try {

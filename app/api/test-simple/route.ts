@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Test endpoint WITHOUT Edge Runtime to see if that's the issue
-// export const runtime = 'edge'; // COMMENTED OUT
+// Cloudflare Pages requires Edge Runtime for all routes
+export const runtime = 'edge';
 
 export async function GET() {
   try {

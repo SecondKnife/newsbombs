@@ -6,10 +6,10 @@ import { notFound } from 'next/navigation'
 import { getArticleBySlug, getAllArticles, type Article } from '@/lib/api/articles'
 import { Metadata } from 'next'
 
-// Static generation - fetch data at build time
-// Note: Cannot use edge runtime with generateStaticParams in Next.js
-// Cloudflare Pages will handle static routes automatically
-export const dynamic = 'force-static';
+// Cloudflare Pages requires Edge Runtime for all routes
+export const runtime = 'edge';
+
+// Cloudflare Pages will handle static generation automatically
 export const dynamicParams = false; // Return 404 for unknown slugs
 
 // Helper function to check if content is HTML
@@ -81,22 +81,8 @@ export async function generateMetadata({
   }
 }
 
-// Generate static params for all articles at build time
-export async function generateStaticParams() {
-  try {
-    const articles = await getAllArticles();
-    if (!Array.isArray(articles)) {
-      return [];
-    }
-    // Return array of slug arrays for each article
-    return articles.map((article) => ({
-      slug: article.slug.split('/'),
-    }));
-  } catch (error: any) {
-    console.error('Error generating static params:', error?.message || error);
-    return [];
-  }
-}
+// Note: generateStaticParams cannot be used with Edge Runtime
+// Cloudflare Pages will handle static generation automatically
 
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
   try {
