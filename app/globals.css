@@ -160,3 +160,50 @@ img {
   align-items: center;
   justify-content: center;
 }
+
+/* Force white text color in dark mode for article content */
+.dark .article-content {
+  color: #ffffff !important;
+}
+
+.dark .article-content p,
+.dark .article-content div,
+.dark .article-content span,
+.dark .article-content li,
+.dark .article-content ul,
+.dark .article-content ol,
+.dark .article-content blockquote,
+.dark .article-content pre,
+.dark .article-content code {
+  color: #ffffff !important;
+}
+
+.dark .article-content h1,
+.dark .article-content h2,
+.dark .article-content h3,
+.dark .article-content h4,
+.dark .article-content h5,
+.dark .article-content h6 {
+  color: #ffffff !important;
+}
+
+/* Ensure all text elements in article content are white in dark mode */
+.dark .article-content * {
+  color: #ffffff !important;
+}
+
+/* Exception: links should have primary color */
+.dark .article-content a {
+  color: hsl(var(--primary)) !important;
+}
+
+/* Exception: code blocks can have different background */
+.dark .article-content code {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.dark .article-content pre {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
