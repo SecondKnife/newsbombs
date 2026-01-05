@@ -35,6 +35,7 @@ function getApiBaseUrl(): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Wrap everything in try-catch to ensure we always return JSON
   try {
     // Parse request body
     let body;
@@ -42,23 +43,45 @@ export async function POST(request: NextRequest) {
       body = await request.json();
     } catch (parseError: any) {
       console.error('Error parsing request body:', parseError);
-      return NextResponse.json(
-        { message: 'Invalid request body' },
-        { status: 400 }
+      return new NextResponse(
+        JSON.stringify({ message: 'Invalid request body', error: 'ParseError' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
     
     // Validate request body
     if (!body || !body.email || !body.password) {
-      return NextResponse.json(
-        { message: 'Email and password are required' },
-        { status: 400 }
+      return new NextResponse(
+        JSON.stringify({ message: 'Email and password are required', error: 'ValidationError' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
-    const API_BASE_URL = getApiBaseUrl();
-    const backendUrl = `${API_BASE_URL}/api/auth/login`;
+    let API_BASE_URL: string;
+    try {
+      API_BASE_URL = getApiBaseUrl();
+    } catch (urlError: any) {
+      console.error('Error getting API URL:', urlError);
+      return new NextResponse(
+        JSON.stringify({ 
+          message: 'Failed to get backend URL', 
+          error: 'ConfigError',
+          details: urlError.message 
+        }),
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
     
+    const backendUrl = `${API_BASE_URL}/api/auth/login`;
     console.log('Forwarding login request to:', backendUrl);
     
     // Forward request to backend API
@@ -150,29 +173,43 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(data);
   } catch (error: any) {
+    // Ensure we always return JSON, even for unexpected errors
     console.error('Login proxy error:', error);
     
-    // Return detailed error message for debugging
-    const errorMessage = error.message || 'An error occurred during login';
-    const errorStack = error.stack || '';
+    const errorMessage = error?.message || 'An error occurred during login';
+    const errorName = error?.name || 'UnknownError';
+    const errorStack = error?.stack || '';
     
     // Log full error details
     console.error('Full error details:', {
       message: errorMessage,
       stack: errorStack,
-      name: error.name,
-      cause: error.cause,
+      name: errorName,
+      cause: error?.cause,
     });
     
-    return NextResponse.json(
-      { 
-        message: errorMessage,
-        error: error.name || 'UnknownError',
-        // Only include stack in development
-        ...(process.env.NODE_ENV === 'development' && { stack: errorStack })
-      },
-      { status: 500 }
-    );
+    // Always return JSON response
+    try {
+      return new NextResponse(
+        JSON.stringify({ 
+          message: errorMessage,
+          error: errorName,
+        }),
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    } catch (responseError: any) {
+      // Last resort: return plain text if JSON.stringify fails
+      console.error('Failed to create JSON response:', responseError);
+      return new NextResponse(
+        `Internal Server Error: ${errorMessage}`,
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'text/plain' }
+        }
+      );
+    }
   }
 }
-
