@@ -26,7 +26,7 @@ ingress:
 
 **Sửa thành:**
 ```yaml
-protocol: tcp  # Force TCP instead of QUIC
+protocol: http2  # Force HTTP2 (TCP) instead of QUIC (UDP)
 
 tunnel: 81411476-b07b-4073-972d-143f186a8312
 credentials-file: /root/.cloudflared/81411476-b07b-4073-972d-143f186a8312.json
@@ -36,6 +36,8 @@ ingress:
     service: http://localhost:3001
   - service: http_status:404
 ```
+
+**Lưu ý:** Protocol phải là `http2` (không phải `tcp`). `http2` sử dụng TCP thay vì QUIC (UDP).
 
 **Lưu ý:** Dòng `protocol: tcp` phải ở đầu file, trước `tunnel:`.
 
@@ -64,8 +66,8 @@ TUNNEL_LOGLEVEL=debug cloudflared tunnel --config /etc/cloudflared/config.yml ru
 
 Bây giờ bạn sẽ thấy:
 ```
-DBG Fetched protocol: tcp
-INF Initial protocol tcp
+DBG Fetched protocol: http2
+INF Initial protocol http2
 ```
 
 Thay vì:
@@ -151,7 +153,7 @@ Vào `https://nhatbinhkt.com/admin/login` và thử login!
 ### Config file đầy đủ (reference)
 
 ```yaml
-protocol: tcp
+protocol: http2  # Use HTTP2 (TCP) instead of QUIC (UDP)
 
 tunnel: 81411476-b07b-4073-972d-143f186a8312
 credentials-file: /root/.cloudflared/81411476-b07b-4073-972d-143f186a8312.json
@@ -161,4 +163,9 @@ ingress:
     service: http://localhost:3001
   - service: http_status:404
 ```
+
+**Lưu ý:** 
+- `protocol: http2` → Sử dụng TCP (HTTP/2)
+- `protocol: quic` → Sử dụng UDP (QUIC) - default
+- `protocol: auto` → Tự động chọn protocol tốt nhất
 
