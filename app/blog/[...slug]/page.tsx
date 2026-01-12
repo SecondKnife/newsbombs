@@ -9,7 +9,9 @@ import { Metadata } from 'next'
 // Cloudflare Pages requires Edge Runtime for all routes
 export const runtime = 'edge';
 
-// Cloudflare Pages will handle static generation automatically
+// Force dynamic rendering to always fetch fresh data from API
+export const dynamic = 'force-dynamic';
+
 export const dynamicParams = false; // Return 404 for unknown slugs
 
 // Helper function to check if content is HTML

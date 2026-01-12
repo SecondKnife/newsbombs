@@ -104,12 +104,15 @@ export async function getAllArticles(): Promise<Article[]> {
     
     console.log('[getAllArticles] Fetching articles from:', url);
     
-    // Simple fetch for Edge Runtime (no next.revalidate)
+    // Fetch with no cache to always get fresh data
     const response = await fetchWithTimeout(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
       },
+      cache: 'no-store', // Disable caching for Edge Runtime
     }, 5000);
     
     if (!response.ok) {
@@ -156,12 +159,15 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       return null;
     }
     
-    // Simple fetch for Edge Runtime (no next.revalidate)
+    // Fetch with no cache to always get fresh data
     const response = await fetchWithTimeout(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
       },
+      cache: 'no-store', // Disable caching for Edge Runtime
     }, 5000);
     
     if (!response.ok) {
@@ -201,12 +207,15 @@ export async function getArticleById(id: string): Promise<Article | null> {
       return null;
     }
     
-    // Simple fetch for Edge Runtime (no next.revalidate)
+    // Fetch with no cache to always get fresh data
     const response = await fetchWithTimeout(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
       },
+      cache: 'no-store', // Disable caching for Edge Runtime
     }, 5000);
     
     if (!response.ok) {

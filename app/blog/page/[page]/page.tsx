@@ -5,7 +5,9 @@ import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 // Cloudflare Pages requires Edge Runtime for all routes
 export const runtime = 'edge';
 
-// Cloudflare Pages will handle static generation automatically
+// Force dynamic rendering to always fetch fresh data from API
+export const dynamic = 'force-dynamic';
+
 export const dynamicParams = false; // Return 404 for unknown pages
 
 // Note: generateStaticParams cannot be used with Edge Runtime

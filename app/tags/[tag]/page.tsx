@@ -8,7 +8,9 @@ import { getAllArticles, type Article } from "@/lib/api/articles";
 // Cloudflare Pages requires Edge Runtime for all routes
 export const runtime = 'edge';
 
-// Cloudflare Pages will handle static generation automatically
+// Force dynamic rendering to always fetch fresh data from API
+export const dynamic = 'force-dynamic';
+
 export const dynamicParams = false; // Return 404 for unknown tags
 
 export async function generateMetadata(

@@ -1,12 +1,15 @@
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import HomeRedirect from "@/components/HomeRedirect";
 
-// Removed edge runtime - not compatible with Cloudflare Pages
-// export const runtime = 'edge';
+// Cloudflare Pages requires Edge Runtime for all routes
+export const runtime = 'edge';
+
+// Force dynamic rendering to always fetch fresh data from API
+export const dynamic = 'force-dynamic';
 
 // Use dynamic import with better error handling
-const HomePage = dynamic(() => import("@/components/home").catch((error) => {
+const HomePage = dynamicImport(() => import("@/components/home").catch((error) => {
   console.error('Failed to load HomePage component:', error);
   // Return a fallback component
   return {
@@ -41,8 +44,8 @@ export default async function Home() {
     let articles: Article[] = [];
     try {
       // Wrap in additional try-catch for edge runtime compatibility
-      try {
-        articles = await getAllArticles();
+    try {
+      articles = await getAllArticles();
       } catch (fetchError: any) {
         // Handle fetch errors gracefully
         console.warn('Failed to fetch articles:', fetchError?.message || fetchError);
