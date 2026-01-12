@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Simple test endpoint to check if API route works
 export const runtime = 'edge';
 
 export async function GET() {
@@ -35,12 +34,10 @@ export async function POST(request: NextRequest) {
     console.log('[TEST POST] Request method:', request.method);
     console.log('[TEST POST] Request headers:', Object.fromEntries(request.headers.entries()));
     
-    // Test POST request parsing - try multiple methods
     let body: any = {};
     let parseMethod = 'none';
     
     try {
-      // Method 1: Try request.json() directly (recommended for Edge Runtime)
       if (request.body) {
         body = await request.json();
         parseMethod = 'json()';
@@ -52,7 +49,6 @@ export async function POST(request: NextRequest) {
       console.error('[TEST POST] request.json() failed:', jsonError.message);
       
       try {
-        // Method 2: Try request.text() then parse
         const bodyText = await request.text();
         parseMethod = 'text()';
         if (bodyText) {

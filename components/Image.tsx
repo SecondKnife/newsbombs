@@ -3,20 +3,16 @@
 import NextImage, { ImageProps } from "next/legacy/image"
 import { useState } from "react"
 
-// Extend ImageProps to include fill prop
 interface CustomImageProps extends Omit<ImageProps, 'fill'> {
   fill?: boolean;
 }
 
 const Image = (props: CustomImageProps) => {
-  // Extract fill prop separately
   const { fill, width, height, src, className, alt, ...rest } = props;
   const [hasError, setHasError] = useState(false);
   
-  // Check if src is an external URL
   const isExternalUrl = typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'));
   
-  // If error occurred or external URL, use regular img tag as fallback
   if (hasError || isExternalUrl) {
     if (fill === true) {
       return (
@@ -43,8 +39,6 @@ const Image = (props: CustomImageProps) => {
     );
   }
   
-  // For local images, use normal Next.js Image optimization
-  // If fill is true, use layout='fill' for legacy Image
   if (fill === true) {
     return (
       <NextImage
@@ -58,8 +52,6 @@ const Image = (props: CustomImageProps) => {
     );
   }
   
-  // For regular images, ensure width and height are provided
-  // If not provided, use default dimensions
   if (!width || !height) {
     return (
       <NextImage

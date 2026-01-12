@@ -9,7 +9,6 @@ interface RichTextEditorProps {
   minHeight?: string;
 }
 
-// Custom upload adapter for CKEditor
 class MyUploadAdapter {
   loader: any;
   
@@ -25,7 +24,6 @@ class MyUploadAdapter {
         
         const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
         
-        // Use buildApiUrl helper to get correct API URL
         const apiUrl = typeof window !== 'undefined' 
           ? (process.env.NEXT_PUBLIC_API_URL || 'https://api.nhatbinhkt.com')
           : 'https://api.nhatbinhkt.com';
@@ -52,7 +50,6 @@ class MyUploadAdapter {
   }
 
   abort() {
-    // Handle abort if needed
   }
 }
 
@@ -73,24 +70,20 @@ export default function RichTextEditor({
   const [editorInstance, setEditorInstance] = useState<any>(null);
 
   useEffect(() => {
-    // Only run on client side
     if (typeof window === "undefined") return;
 
     let isMounted = true;
 
     const loadEditor = async () => {
       try {
-        // Dynamically import CKEditor modules
-        // Suppress version warning - using compatible version
         const { CKEditor } = await import("@ckeditor/ckeditor5-react");
         const ClassicEditor = (await import("@ckeditor/ckeditor5-build-classic")).default;
         
-        // Suppress CKEditor version warning
         if (typeof window !== 'undefined' && (window as any).console) {
           const originalWarn = console.warn;
           console.warn = (...args: any[]) => {
             if (args[0]?.includes?.('CKEditor') && args[0]?.includes?.('version')) {
-              return; // Suppress CKEditor version warnings
+              return;
             }
             originalWarn.apply(console, args);
           };
@@ -98,7 +91,6 @@ export default function RichTextEditor({
 
         if (!isMounted) return;
 
-        // Store references
         editorRef.current = { CKEditor, ClassicEditor };
         setEditorLoaded(true);
       } catch (error) {
@@ -113,7 +105,6 @@ export default function RichTextEditor({
     };
   }, []);
 
-  // Update editor content when value prop changes
   useEffect(() => {
     if (editorInstance && value !== editorInstance.getData()) {
       editorInstance.setData(value);
@@ -178,7 +169,6 @@ export default function RichTextEditor({
               'toggleImageCaption',
               'imageTextAlternative'
             ],
-            // Default to block style (centered)
             styles: {
               options: [
                 'inline',
@@ -195,7 +185,6 @@ export default function RichTextEditor({
         }}
         onReady={(editor: any) => {
           setEditorInstance(editor);
-          // Set minimum height
           const editorElement = editor.ui.view.editable.element;
           if (editorElement) {
             editorElement.style.minHeight = minHeight;

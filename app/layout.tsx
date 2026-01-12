@@ -9,8 +9,6 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 import ThemeWrapper from "@/components/ThemeWrapper";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import bgStylesConfigs from "@/lib/client/bgStylesConfigs";
-// Vercel Analytics removed - not needed on Cloudflare Pages
-// import { Analytics } from "@vercel/analytics/react"
 import dynamic from "next/dynamic";
 
 const MotionContainer = dynamic(() => import("@/components/motions/Container"));
@@ -19,11 +17,6 @@ const plus = Inter({
   subsets: ["vietnamese"],
   variable: "--font-var",
 });
-// const space_grotesk = Space_Grotesk({
-//   subsets: ['latin'],
-//   display: 'swap',
-//   variable: '--font-space-grotesk',
-// })
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -102,18 +95,6 @@ export default async function RootLayout({
         sizes="76x76"
         href="/static/favicons/apple-touch-icon.png"
       />
-      {/* <link
-        rel="icon"
-        type="image/png"
-        sizes="32x32"
-        href="/static/favicons/favicon-32x32.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="16x16"
-        href="/static/favicons/favicon-16x16.png"
-      /> */}
       <link rel="manifest" href="/static/favicons/site.webmanifest" />
       <link
         rel="mask-icon"
@@ -133,7 +114,6 @@ export default async function RootLayout({
       />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <body className="">
-        {/* Vercel Analytics removed - not needed on Cloudflare Pages */}
         <LanguageProvider>
           <ThemeWrapper bgFlagNumber={bgFlagNumber}>
             <AnimatedBackground className="bg-slate-100 pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white"/>

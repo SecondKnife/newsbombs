@@ -28,7 +28,6 @@ const Header = () => {
   const { theme, resolvedTheme } = useTheme();
   const { t } = useTranslation();
   
-  // Navigation links with translations
   const navLinks = [
     { href: '/', title: t('common.home') },
     { href: '/blog', title: t('common.news') },
@@ -38,7 +37,6 @@ const Header = () => {
 
   useEffect(() => {
     setMounted(true);
-    // Check if user is logged in
     const token = localStorage.getItem("admin_token");
     const userInfo = localStorage.getItem("admin_user");
     
@@ -59,7 +57,6 @@ const Header = () => {
     window.location.href = "/";
   };
 
-  // Determine which logo to show based on theme
   const currentTheme = mounted ? (resolvedTheme || theme) : 'dark';
   const logoSrc = currentTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png';
 

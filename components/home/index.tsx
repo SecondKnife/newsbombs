@@ -13,7 +13,6 @@ const HomePage = ({ blogs }: { blogs: any[] }) => {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const { t } = useTranslation();
 
-  // Filter out draft posts and sort by date
   const sortedPosts = useMemo(() => [...blogs]
     .filter((post) => !post.draft)
     .sort((a, b) => 
@@ -27,7 +26,6 @@ const HomePage = ({ blogs }: { blogs: any[] }) => {
       return true;
     }), [blogs]);
 
-  // Filter by selected tag
   const filteredPosts = useMemo(() => {
     if (!selectedTag) return sortedPosts;
     return sortedPosts.filter(post => 
@@ -35,16 +33,10 @@ const HomePage = ({ blogs }: { blogs: any[] }) => {
     );
   }, [sortedPosts, selectedTag]);
 
-  // Featured post (most recent)
   const featuredPost = sortedPosts[0];
-
-  // Latest posts (excluding featured)
   const latestPosts = filteredPosts.slice(selectedTag ? 0 : 1, 9);
-
-  // More posts
   const morePosts = filteredPosts.slice(9, 17);
 
-  // Extract all unique tags
   const allTags = useMemo(() => {
     const tags = new Set<string>();
     sortedPosts.forEach((post) => {

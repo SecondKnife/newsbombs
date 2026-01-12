@@ -2,16 +2,11 @@ import dynamicImport from "next/dynamic";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import HomeRedirect from "@/components/HomeRedirect";
 
-// Cloudflare Pages requires Edge Runtime for all routes
 export const runtime = 'edge';
-
-// Force dynamic rendering to always fetch fresh data from API
 export const dynamic = 'force-dynamic';
 
-// Use dynamic import with better error handling
 const HomePage = dynamicImport(() => import("@/components/home").catch((error) => {
   console.error('Failed to load HomePage component:', error);
-  // Return a fallback component
   return {
     default: ({ blogs }: { blogs: any[] }) => (
       <div className="min-h-screen flex items-center justify-center">
@@ -40,31 +35,24 @@ const HomePage = dynamicImport(() => import("@/components/home").catch((error) =
 
 export default async function Home() {
   try {
-    // Fetch articles from backend API
     let articles: Article[] = [];
     try {
-      // Wrap in additional try-catch for edge runtime compatibility
-    try {
+      try {
       articles = await getAllArticles();
       } catch (fetchError: any) {
-        // Handle fetch errors gracefully
         console.warn('Failed to fetch articles:', fetchError?.message || fetchError);
         articles = [];
       }
       
-      // Ensure articles is always an array
       if (!Array.isArray(articles)) {
         console.warn('getAllArticles returned non-array, using empty array');
         articles = [];
       }
     } catch (error: any) {
-      // Log error but don't throw - show page with empty articles
       console.error('Error loading articles:', error?.message || error);
       articles = [];
     }
     
-    // Transform articles to match the expected format
-    // Use try-catch to handle any transformation errors
     let blogPosts: any[] = [];
     try {
       blogPosts = (articles || []).map((article) => {
@@ -101,9 +89,7 @@ export default async function Home() {
       </HomeRedirect>
     );
   } catch (error: any) {
-    // Ultimate fallback - if anything fails, show error page
     console.error('Critical error in Home page:', error?.message || error);
-    // Return empty page instead of crashing
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center p-8">

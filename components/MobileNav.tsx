@@ -9,7 +9,6 @@ const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
   const { t } = useTranslation()
 
-  // Navigation links with translations
   const navLinks = [
     { href: '/', title: t('common.home'), icon: Home },
     { href: '/blog', title: t('common.news'), icon: Newspaper },

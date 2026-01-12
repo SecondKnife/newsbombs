@@ -84,8 +84,8 @@ export default function AboutPage() {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
               {t('common.about')} <span className="text-primary-500">NewsBombs</span>
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              <strong>NewsBombs</strong> {t('about.intro')}{' '}
+            <p className="text-sm sm:text-base md:text-lg text-white max-w-4xl mx-auto leading-relaxed bg-black/70 dark:bg-black/50 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-4 sm:py-5">
+              {t('about.intro')}{' '}
               <strong>{t('about.introHighlight')}</strong>. {t('about.introDesc')}
             </p>
           </motion.div>

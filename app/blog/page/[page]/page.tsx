@@ -2,22 +2,14 @@ import ListLayout from "@layouts/ListLayoutWithTags";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-// Cloudflare Pages requires Edge Runtime for all routes
 export const runtime = 'edge';
-
-// Force dynamic rendering to always fetch fresh data from API
 export const dynamic = 'force-dynamic';
-
-export const dynamicParams = false; // Return 404 for unknown pages
-
-// Note: generateStaticParams cannot be used with Edge Runtime
-// Cloudflare Pages will handle static generation automatically
+export const dynamicParams = false;
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
   try {
     const params = await props.params;
     
-    // Fetch articles from backend with error handling
     let articles: Article[] = [];
     try {
       articles = await getAllArticles();
@@ -29,7 +21,6 @@ export default async function Page(props: { params: Promise<{ page: string }> })
       articles = [];
     }
     
-    // Transform articles to match expected format
     const posts = (articles || []).map((article) => ({
     ...article,
     name: article.slug,
@@ -67,7 +58,6 @@ export default async function Page(props: { params: Promise<{ page: string }> })
   );
   } catch (error: any) {
     console.error('Error rendering blog page:', error?.message || error);
-    // Return empty page instead of crashing
     return (
       <ListLayout
         posts={[]}

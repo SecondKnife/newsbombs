@@ -23,7 +23,6 @@ export default function NewsGrid({ posts, title }: NewsGridProps) {
   
   if (!posts || posts.length === 0) return null;
 
-  // First post is featured (larger)
   const featuredPost = posts[0];
   const remainingPosts = posts.slice(1);
 

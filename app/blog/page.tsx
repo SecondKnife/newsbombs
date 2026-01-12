@@ -3,20 +3,15 @@ import { genPageMetadata } from "data/seo";
 import { getAllArticles, type Article } from "@/lib/api/articles";
 import { POSTS_PER_PAGE } from "@/lib/constants/pagination";
 
-// Cloudflare Pages requires Edge Runtime for all routes
 export const runtime = 'edge';
-
-// Force dynamic rendering to always fetch fresh data from API
 export const dynamic = 'force-dynamic';
 
 export const metadata = genPageMetadata({ title: "Blog" });
 
 export default async function BlogPage(props: any) {
-  // Fetch articles from backend API with error handling
   let articles: Article[] = [];
   try {
     articles = await getAllArticles();
-    // Ensure articles is always an array
     if (!Array.isArray(articles)) {
       articles = [];
     }
@@ -25,7 +20,6 @@ export default async function BlogPage(props: any) {
     articles = [];
   }
   
-  // Transform articles to match the expected format
   const posts = (articles || []).map((article) => ({
     ...article,
     name: article.slug,

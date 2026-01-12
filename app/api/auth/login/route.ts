@@ -1,25 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Try Node.js runtime first - Edge Runtime may not support HTTP fetch
-// If this doesn't work on Cloudflare Pages, we'll need to use Edge Runtime
-// but with better error handling
 export const runtime = 'edge';
 
-// Get API base URL
-// In Edge Runtime, environment variables are available via process.env at build time
-// But at runtime, they might need to be accessed differently
 function getApiBaseUrl(): string {
   try {
-    // Try multiple methods to get environment variable
     let apiUrl: string | undefined;
     
-    // Method 1: process.env (works in Edge Runtime)
     if (typeof process !== 'undefined' && process.env) {
       apiUrl = process.env.NEXT_PUBLIC_API_URL;
       console.log('[getApiBaseUrl] Method 1 (process.env):', apiUrl);
     }
     
-    // Method 2: globalThis (fallback for some edge runtimes)
     if (!apiUrl && typeof globalThis !== 'undefined') {
       apiUrl = (globalThis as any).NEXT_PUBLIC_API_URL;
       console.log('[getApiBaseUrl] Method 2 (globalThis):', apiUrl);
@@ -34,17 +25,14 @@ function getApiBaseUrl(): string {
     console.warn('[getApiBaseUrl] Error reading API URL:', error);
   }
   
-  // Fallback to HTTPS tunnel endpoint
   console.log('[getApiBaseUrl] Using fallback: https://api.nhatbinhkt.com');
   return 'https://api.nhatbinhkt.com';
 }
 
 export async function POST(request: NextRequest) {
-  // Wrap everything in try-catch to ensure we always return JSON
   try {
     console.log('[LOGIN API] Request received');
     
-    // Get API URL first to check if it's available
     let API_BASE_URL: string;
     try {
       API_BASE_URL = getApiBaseUrl();
@@ -64,16 +52,12 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Parse request body
-    // In Edge Runtime, use request.json() directly
     let body;
     try {
-      // Check if request has body
       if (!request.body) {
         throw new Error('Request has no body');
       }
       
-      // Try to parse JSON directly (works in Edge Runtime)
       body = await request.json();
       console.log('[LOGIN API] Parsed body:', JSON.stringify(body));
     } catch (parseError: any) {
@@ -84,7 +68,6 @@ export async function POST(request: NextRequest) {
         stack: parseError.stack
       });
       
-      // Return detailed error for debugging
       return new NextResponse(
         JSON.stringify({ 
           message: 'Invalid request body', 
@@ -99,7 +82,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Validate request body
     if (!body || !body.email || !body.password) {
       return new NextResponse(
         JSON.stringify({ message: 'Email and password are required', error: 'ValidationError' }),
@@ -113,7 +95,6 @@ export async function POST(request: NextRequest) {
     const backendUrl = `${API_BASE_URL}/api/auth/login`;
     console.log('[LOGIN API] Forwarding login request to:', backendUrl);
     
-    // Forward request to backend API
     let response;
     try {
       response = await fetch(backendUrl, {
@@ -134,7 +115,6 @@ export async function POST(request: NextRequest) {
         cause: fetchError.cause,
       });
       
-      // Check if it's a URL-related error
       if (fetchError.message?.includes('URL') || fetchError.message?.includes('Invalid')) {
         return new NextResponse(
           JSON.stringify({ 
@@ -149,7 +129,6 @@ export async function POST(request: NextRequest) {
         );
       }
       
-      // Check if it's a network error
       if (fetchError.message?.includes('fetch') || fetchError.message?.includes('network')) {
         return new NextResponse(
           JSON.stringify({ 
@@ -223,14 +202,12 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error: any) {
-    // Ensure we always return JSON, even for unexpected errors
     console.error('Login proxy error:', error);
     
     const errorMessage = error?.message || 'An error occurred during login';
     const errorName = error?.name || 'UnknownError';
     const errorStack = error?.stack || '';
     
-    // Log full error details
     console.error('Full error details:', {
       message: errorMessage,
       stack: errorStack,
@@ -238,7 +215,6 @@ export async function POST(request: NextRequest) {
       cause: error?.cause,
     });
     
-    // Always return JSON response
     try {
       return new NextResponse(
         JSON.stringify({ 
@@ -251,7 +227,6 @@ export async function POST(request: NextRequest) {
         }
       );
     } catch (responseError: any) {
-      // Last resort: return plain text if JSON.stringify fails
       console.error('Failed to create JSON response:', responseError);
       return new NextResponse(
         `Internal Server Error: ${errorMessage}`,

@@ -20,8 +20,6 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // Use Next.js API route proxy to avoid mixed content issues
-      // This route runs on server-side and can call HTTP backend
       const response = await fetch('/api/auth/login', {
         method: "POST",
         headers: {
@@ -38,14 +36,12 @@ export default function AdminLogin() {
           try {
             errorData = JSON.parse(errorText);
           } catch {
-            // If not JSON, use text as message
             errorData = { message: errorText || `Login failed: ${response.status} ${response.statusText}` };
           }
         } catch (textError) {
           errorData = { message: `Login failed: ${response.status} ${response.statusText}` };
         }
         
-        // Show detailed error message
         const errorMessage = errorData.message || errorData.error || "Login failed";
         console.error('Login error:', errorData);
         throw new Error(errorMessage);
@@ -53,11 +49,9 @@ export default function AdminLogin() {
 
       const data = await response.json();
 
-      // Store token and user info
       localStorage.setItem("admin_token", data.access_token);
       localStorage.setItem("admin_user", JSON.stringify(data.user));
 
-      // Redirect to admin dashboard with full page reload to update header
       window.location.href = "/admin/dashboard";
     } catch (err: any) {
       setError(err.message || "An error occurred");

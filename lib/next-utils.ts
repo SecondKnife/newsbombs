@@ -1,4 +1,3 @@
-// Utility function to convert text to URL-friendly slug
 export function slug(text: string): string {
   return text
     .toString()

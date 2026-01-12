@@ -14,7 +14,6 @@ import dynamic from "next/dynamic";
 import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
 
-// Dynamically import RichTextEditor to avoid SSR issues with CKEditor
 const RichTextEditor = dynamic(
   () => import("@/components/RichTextEditor").then((mod) => mod.default),
   {

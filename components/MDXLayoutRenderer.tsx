@@ -6,7 +6,6 @@ import Image from "./Image"
 export const MDXComponents = {
     Image,
     img: (props: any) => {
-        // For markdown images, use Image component with fill
         if (props.src) {
             return (
                 <div className="relative w-full my-4" style={{ aspectRatio: '16/9' }}>
@@ -19,7 +18,6 @@ export const MDXComponents = {
                 </div>
             )
         }
-        // Fallback to regular img tag if no src (with eslint disable for this case)
         // eslint-disable-next-line @next/next/no-img-element
         return <img {...props} alt={props.alt || ''} />
     },

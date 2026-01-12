@@ -6,17 +6,11 @@ import { notFound } from 'next/navigation'
 import { getArticleBySlug, getAllArticles, type Article } from '@/lib/api/articles'
 import { Metadata } from 'next'
 
-// Cloudflare Pages requires Edge Runtime for all routes
 export const runtime = 'edge';
-
-// Force dynamic rendering to always fetch fresh data from API
 export const dynamic = 'force-dynamic';
+export const dynamicParams = false;
 
-export const dynamicParams = false; // Return 404 for unknown slugs
-
-// Helper function to check if content is HTML
 function isHTMLContent(content: string): boolean {
-  // Check if content contains HTML tags
   return /<[a-z][\s\S]*>/i.test(content);
 }
 
@@ -78,26 +72,20 @@ export async function generateMetadata({
     },
   }
   } catch (error) {
-    // Return undefined if error occurs
     return undefined;
   }
 }
-
-// Note: generateStaticParams cannot be used with Edge Runtime
-// Cloudflare Pages will handle static generation automatically
 
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
   try {
     const params = await props.params;
     const slug = decodeURI(params.slug.join('/'))
     
-    // Fetch article from backend with error handling
     let article;
     try {
       article = await getArticleBySlug(slug);
     } catch (error: any) {
       console.error('Error fetching article:', error?.message || error);
-      // Return simple error page instead of notFound() for edge runtime compatibility
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -109,7 +97,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
     }
     
     if (!article) {
-      // Return simple error page instead of notFound() for edge runtime compatibility
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -120,7 +107,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       );
     }
 
-    // Fetch all articles for prev/next navigation with error handling
     let allArticles: Article[] = [];
     try {
       allArticles = await getAllArticles();
@@ -132,7 +118,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       allArticles = [];
     }
     
-    // Safely sort articles with error handling
     let sortedArticles: Article[] = [];
     try {
       sortedArticles = allArticles.sort((a, b) => {
@@ -151,7 +136,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
     const prev = postIndex < sortedArticles.length - 1 ? sortedArticles[postIndex + 1] : null
     const next = postIndex > 0 ? sortedArticles[postIndex - 1] : null
 
-    // Transform article to match expected format with error handling
     let mainContent;
     try {
       mainContent = {
@@ -236,7 +220,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       );
     } catch (renderError: any) {
       console.error('Error rendering Layout:', renderError?.message || renderError);
-      // Fallback: return simple article view
       return (
         <div className="min-h-screen p-8">
           <h1 className="text-3xl font-bold mb-4">{article.title || 'Untitled'}</h1>
@@ -246,7 +229,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
     }
   } catch (error: any) {
     console.error('Error rendering article page:', error?.message || error);
-    // Return simple error page instead of notFound() for edge runtime compatibility
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
