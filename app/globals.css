@@ -162,8 +162,13 @@ img {
 }
 
 /* Force white text color for article content in both light and dark mode */
+/* Add dark background for article content to make white text visible */
 .article-content {
   color: #ffffff !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  padding: 2rem !important;
+  border-radius: 0.5rem !important;
+  backdrop-filter: blur(10px) !important;
 }
 
 .article-content p,
@@ -208,9 +213,10 @@ img {
   color: #ffffff !important;
 }
 
-/* Dark mode specific overrides (if needed) */
+/* Dark mode specific overrides */
 .dark .article-content {
   color: #ffffff !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .dark .article-content * {
