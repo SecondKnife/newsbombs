@@ -11,7 +11,7 @@ export default function Footer() {
   
   return (
     <motion.footer variants={arise}>
-      <div className="mt-8 sm:mt-16 border-t border-gray-200 dark:border-gray-700 bg-black/70 dark:bg-black/50 backdrop-blur-sm">
+      <div className="mt-8 sm:mt-16 border-t border-gray-200 dark:border-gray-700">
         <div className="py-6 sm:py-8 px-4 sm:px-6">
           {/* Footer Links */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">

@@ -81,10 +81,10 @@ export default function AboutPage() {
           className="mb-8 sm:mb-10 md:mb-12"
         >
           <motion.div variants={fadeInUp} className="text-center mb-6 sm:mb-8 px-2">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4 bg-black/70 dark:bg-black/50 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-3 sm:py-4 inline-block">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-3 sm:mb-4">
               {t('common.about')} <span className="text-primary-500">NewsBombs</span>
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-white max-w-4xl mx-auto leading-relaxed bg-black/70 dark:bg-black/50 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-4 sm:py-5">
+            <p className="text-sm sm:text-base md:text-lg text-white max-w-4xl mx-auto leading-relaxed text-center">
               {t('about.intro')}{' '}
               <strong>{t('about.introHighlight')}</strong>. {t('about.introDesc')}
             </p>
@@ -93,7 +93,7 @@ export default function AboutPage() {
 
         {/* Timeline - Key Milestones */}
         <div className="mb-8 sm:mb-12 md:mb-16 px-2">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-6 sm:mb-8 bg-black/70 dark:bg-black/50 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-3 sm:py-4 inline-block">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-6 sm:mb-8">
             📅 {t('about.timeline')}
           </h2>
 
@@ -187,7 +187,7 @@ export default function AboutPage() {
           transition={{ delay: 0.4 }}
           className="mb-8 sm:mb-12 md:mb-16 px-2"
         >
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-6 sm:mb-8 bg-black/70 dark:bg-black/50 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-3 sm:py-4 inline-block">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-6 sm:mb-8">
             📰 {t('about.whatWeProvide')}
           </h2>
           
@@ -310,25 +310,25 @@ export default function AboutPage() {
           transition={{ delay: 0.6 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-12 px-2"
         >
-          <div className="text-center p-4 sm:p-5 md:p-6 bg-red-900/40 dark:bg-red-900/20 backdrop-blur-md rounded-lg sm:rounded-xl border border-red-500/60">
+          <div className="text-center p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">80</div>
             <div className="text-xs sm:text-sm text-white">
               {t('about.yearsEstablished')}
             </div>
           </div>
-          <div className="text-center p-4 sm:p-5 md:p-6 bg-yellow-900/40 dark:bg-yellow-900/20 backdrop-blur-md rounded-lg sm:rounded-xl border border-yellow-500/60">
+          <div className="text-center p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">1946</div>
             <div className="text-xs sm:text-sm text-white">
               {t('about.yearFounded')}
             </div>
           </div>
-          <div className="text-center p-4 sm:p-5 md:p-6 bg-green-900/40 dark:bg-green-900/20 backdrop-blur-md rounded-lg sm:rounded-xl border border-green-500/60">
+          <div className="text-center p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">25/03</div>
             <div className="text-xs sm:text-sm text-white">
               {t('about.foundingDate')}
             </div>
           </div>
-          <div className="text-center p-4 sm:p-5 md:p-6 bg-blue-900/40 dark:bg-blue-900/20 backdrop-blur-md rounded-lg sm:rounded-xl border border-blue-500/60">
+          <div className="text-center p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">2026</div>
             <div className="text-xs sm:text-sm text-white">
               {t('about.anniversaryYear')}
@@ -341,7 +341,7 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="text-center bg-black/70 dark:bg-gray-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 mx-2 sm:mx-0 backdrop-blur-sm"
+          className="text-center rounded-xl sm:rounded-2xl p-6 sm:p-8 mx-2 sm:mx-0"
         >
           <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">
             🎉 {t('about.celebrateCta')}
