@@ -18,20 +18,24 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AdminGuard } from '../auth/admin.guard';
+import { RateLimitInterceptor } from '../common/rate-limit.interceptor';
+import { StrictRateLimitInterceptor } from '../common/strict-rate-limit.interceptor';
 
 @Controller('api/articles')
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseInterceptors(new StrictRateLimitInterceptor(5, 60000, 300000))
   create(@Body() createArticleDto: CreateArticleDto, @Request() req) {
     return this.articlesService.create(createArticleDto, req.user.id);
   }
 
   @Get()
+  @UseInterceptors(new RateLimitInterceptor(100, 60000))
   findAll() {
-    // Public API: exclude draft articles
     return this.articlesService.findAll(false);
   }
 
@@ -46,19 +50,22 @@ export class ArticlesController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseInterceptors(new StrictRateLimitInterceptor(5, 60000, 300000))
   update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
     return this.articlesService.update(id, updateArticleDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseInterceptors(new StrictRateLimitInterceptor(5, 60000, 300000))
   remove(@Param('id') id: string) {
     return this.articlesService.remove(id);
   }
 
   @Post('upload')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseInterceptors(new StrictRateLimitInterceptor(10, 60000, 300000))
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -99,7 +106,8 @@ export class ArticlesController {
   }
 
   @Post('upload-multiple')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseInterceptors(new StrictRateLimitInterceptor(10, 60000, 300000))
   @UseInterceptors(
     FileInterceptor('files', {
       storage: diskStorage({
@@ -140,7 +148,8 @@ export class ArticlesController {
 
   // Admin API: Get all articles including drafts
   @Get('admin/all')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseInterceptors(new RateLimitInterceptor(50, 60000))
   findAllAdmin() {
     return this.articlesService.findAll(true);
   }
