@@ -1,14 +1,24 @@
 /**
  * Validates and sanitizes image paths
- * Only allows images from /static/ directory or returns placeholder
+ * Allows images from /static/ directory, /uploads/ (backend), and full URLs
  */
 export function getValidImagePath(imagePath: string | null | undefined): string {
   if (!imagePath || typeof imagePath !== 'string') {
     return '/placeholder.jpg';
   }
   
-  // Only allow images from /static/ directory
+  // Allow full URLs (from backend uploads)
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // Allow images from /static/ directory
   if (imagePath.startsWith('/static/')) {
+    return imagePath;
+  }
+  
+  // Allow images from /uploads/ directory (backend uploads)
+  if (imagePath.startsWith('/uploads/')) {
     return imagePath;
   }
   

@@ -63,6 +63,12 @@ const nextConfig = {
         hostname: "157.66.100.32",
         port: "3001",
       },
+      // Backend uploads via Cloudflare Tunnel
+      {
+        protocol: "https",
+        hostname: "api.nhatbinhkt.com",
+        port: "",
+      },
     ],
   },
 };
