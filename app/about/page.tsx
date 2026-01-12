@@ -298,12 +298,9 @@ export default function AboutPage() {
           className="bg-gradient-to-r from-red-600 to-yellow-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 mb-8 sm:mb-12 text-center text-white mx-2 sm:mx-0"
         >
           <div className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4">⭐</div>
-          <blockquote className="text-lg sm:text-xl md:text-2xl font-medium italic mb-3 sm:mb-4 leading-relaxed">
+          <blockquote className="text-lg sm:text-xl md:text-2xl font-medium italic leading-relaxed">
             &quot;{t('about.motto')}&quot;
           </blockquote>
-          <p className="text-sm sm:text-base text-white/80">
-            — {t('about.mottoLabel')} —
-          </p>
         </motion.div>
 
         {/* Stats */}
