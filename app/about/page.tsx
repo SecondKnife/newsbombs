@@ -97,14 +97,14 @@ export default function AboutPage() {
             📅 {t('about.timeline')}
           </h2>
 
-          <div className="relative max-w-5xl mx-auto">
+          <div className="relative max-w-5xl mx-auto z-0">
             {/* Vertical timeline line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-red-500 via-yellow-500 to-green-500 transform -translate-x-1/2 pointer-events-none" />
+            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-red-500 via-yellow-500 to-green-500 transform -translate-x-1/2 pointer-events-none z-0" />
 
             <div className="space-y-10">
               {/* 1946 - left */}
-              <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4">
-                <div className="md:w-1/2 relative z-0">
+              <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4 z-10">
+                <div className="md:w-1/2 relative z-10">
                   <div className="bg-red-900/40 bg-opacity-60 backdrop-blur-md border border-red-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-red-200">1946</span>
@@ -118,7 +118,7 @@ export default function AboutPage() {
                 </div>
 
                 {/* Center icon - desktop */}
-                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-500 shadow-xl flex items-center justify-center border-4 border-red-200/60">
                     <Flag className="w-6 h-6 text-white" />
                   </div>
@@ -135,17 +135,17 @@ export default function AboutPage() {
               </div>
 
               {/* 1946-1975 - right */}
-              <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4">
+              <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4 z-10">
                 <div className="md:w-1/2 hidden md:block" />
 
                 {/* Center icon - desktop */}
-                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-yellow-500 shadow-xl flex items-center justify-center border-4 border-yellow-200/60">
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                 </div>
 
-                <div className="md:w-1/2 relative z-0">
+                <div className="md:w-1/2 relative z-10">
                   <div className="bg-yellow-900/40 bg-opacity-60 backdrop-blur-md border border-yellow-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-yellow-200">1946–1975</span>
@@ -167,8 +167,8 @@ export default function AboutPage() {
               </div>
 
               {/* 2026 - left */}
-              <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4">
-                <div className="md:w-1/2 relative z-0">
+              <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4 z-10">
+                <div className="md:w-1/2 relative z-10">
                   <div className="bg-green-900/40 bg-opacity-60 backdrop-blur-md border border-green-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-green-200">2026</span>
@@ -182,7 +182,7 @@ export default function AboutPage() {
                 </div>
 
                 {/* Center icon - desktop */}
-                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-green-500 shadow-xl flex items-center justify-center border-4 border-green-200/60">
                     <Star className="w-6 h-6 text-white" />
                   </div>
