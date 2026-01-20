@@ -104,7 +104,7 @@ export default function AboutPage() {
             <div className="space-y-10">
               {/* 1946 - left */}
               <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4">
-                <div className="md:w-1/2">
+                <div className="md:w-1/2 relative z-0">
                   <div className="bg-red-900/40 bg-opacity-60 backdrop-blur-md border border-red-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-red-200">1946</span>
@@ -117,9 +117,16 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                {/* Center icon */}
-                <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                {/* Center icon - desktop */}
+                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-500 shadow-xl flex items-center justify-center border-4 border-red-200/60">
+                    <Flag className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+
+                {/* Center icon - mobile (below card) */}
+                <div className="mt-4 flex md:hidden w-full justify-center">
+                  <div className="w-12 h-12 rounded-full bg-red-500 shadow-xl flex items-center justify-center border-4 border-red-200/60">
                     <Flag className="w-6 h-6 text-white" />
                   </div>
                 </div>
@@ -131,14 +138,14 @@ export default function AboutPage() {
               <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4">
                 <div className="md:w-1/2 hidden md:block" />
 
-                {/* Center icon */}
-                <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                {/* Center icon - desktop */}
+                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-yellow-500 shadow-xl flex items-center justify-center border-4 border-yellow-200/60">
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                 </div>
 
-                <div className="md:w-1/2">
+                <div className="md:w-1/2 relative z-0">
                   <div className="bg-yellow-900/40 bg-opacity-60 backdrop-blur-md border border-yellow-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-yellow-200">1946–1975</span>
@@ -150,11 +157,18 @@ export default function AboutPage() {
                     </p>
                   </div>
                 </div>
+
+                {/* Center icon - mobile (below card) */}
+                <div className="mt-4 flex md:hidden w-full justify-center">
+                  <div className="w-12 h-12 rounded-full bg-yellow-500 shadow-xl flex items-center justify-center border-4 border-yellow-200/60">
+                    <Shield className="w-6 h-6 text-white" />
+                  </div>
+                </div>
               </div>
 
               {/* 2026 - left */}
               <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4">
-                <div className="md:w-1/2">
+                <div className="md:w-1/2 relative z-0">
                   <div className="bg-green-900/40 bg-opacity-60 backdrop-blur-md border border-green-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-green-200">2026</span>
@@ -167,9 +181,16 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                {/* Center icon */}
-                <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                {/* Center icon - desktop */}
+                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-green-500 shadow-xl flex items-center justify-center border-4 border-green-200/60">
+                    <Star className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+
+                {/* Center icon - mobile (below card) */}
+                <div className="mt-4 flex md:hidden w-full justify-center">
+                  <div className="w-12 h-12 rounded-full bg-green-500 shadow-xl flex items-center justify-center border-4 border-green-200/60">
                     <Star className="w-6 h-6 text-white" />
                   </div>
                 </div>
