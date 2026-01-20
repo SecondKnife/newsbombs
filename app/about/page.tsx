@@ -105,7 +105,7 @@ export default function AboutPage() {
               {/* 1946 - left */}
               <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4 z-10">
                 <div className="md:w-1/2 relative z-10">
-                  <div className="bg-red-900/40 bg-opacity-60 backdrop-blur-md border border-red-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
+                  <div className="bg-red-900 md:bg-red-900/40 md:bg-opacity-60 backdrop-blur-md border border-red-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-red-200">1946</span>
                       <Calendar className="w-4 h-4 text-red-200" />
@@ -146,7 +146,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="md:w-1/2 relative z-10">
-                  <div className="bg-yellow-900/40 bg-opacity-60 backdrop-blur-md border border-yellow-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
+                  <div className="bg-yellow-900 md:bg-yellow-900/40 md:bg-opacity-60 backdrop-blur-md border border-yellow-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-yellow-200">1946–1975</span>
                       <Award className="w-4 h-4 text-yellow-200" />
@@ -169,7 +169,7 @@ export default function AboutPage() {
               {/* 2026 - left */}
               <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4 z-10">
                 <div className="md:w-1/2 relative z-10">
-                  <div className="bg-green-900/40 bg-opacity-60 backdrop-blur-md border border-green-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
+                  <div className="bg-green-900 md:bg-green-900/40 md:bg-opacity-60 backdrop-blur-md border border-green-500/60 rounded-2xl p-5 sm:p-6 text-white shadow-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-green-200">2026</span>
                       <Star className="w-4 h-4 text-green-200" />
